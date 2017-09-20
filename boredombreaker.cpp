@@ -1,4 +1,4 @@
-//789
+//
 #include "boredombreaker.h"
 #include "ui_boredombreaker.h"
 
