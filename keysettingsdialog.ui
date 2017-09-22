@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>725</width>
-    <height>532</height>
+    <height>526</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -778,6 +778,16 @@
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QTextEdit" name="teScript">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>350</y>
+     <width>221</width>
+     <height>171</height>
+    </rect>
    </property>
   </widget>
  </widget>
