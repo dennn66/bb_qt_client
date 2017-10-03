@@ -396,7 +396,7 @@ void BoredomBreaker::pbAddClicked(){
 
 void BoredomBreaker::pbLoadProjectClicked(){
     qDebug("BoredomBreaker::pbLoadProjectClicked");
-    clicker->show();
+    //clicker->show();
     int index = ui->cmbWinList->currentIndex();
     if(!isValidIndex(index))return;
 
