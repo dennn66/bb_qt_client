@@ -17,14 +17,11 @@
 #include <QKeyEvent>
 #include "SystemKeyboardReadWrite.h"
 
-#include "l2window.h"
-#include "dongle.h"
-#include "dongleworker.h"
-#include "l2parser.h"
-#include "keysettingsdialog.h"
+#include "l2collection\l2collection_worker.h"
+
+
 #include "clicker.h"
 #include "hotkeys.h"
-
 
 
 BOOL CALLBACK EnumWindowsProc(HWND hwnd,LPARAM lParam);
@@ -40,49 +37,48 @@ class BoredomBreaker : public QMainWindow
 public:
     explicit BoredomBreaker(QWidget *parent = 0);
     ~BoredomBreaker();
-    void addL2Window(HWND hwnd);
+    void addL2HWND(HWND hwnd);
+
 private:
+    QVector <HWND> hwnd_list;
+
     Ui::BoredomBreaker *ui;
-    QVector <L2Window*> l2list;
 
     QLabel *keylabel[KEYNUM];
     QCheckBox *keyenable[KEYNUM];
     QCheckBox *keyenable2[GROUPSNUM];
     QPushButton *keysettings[KEYNUM];
-    //QThread* dongle_thread;
-    //Dongle* dongle;
-    DongleWorker* dongle_worker;
-    Clicker* clicker;
-
-    QThread* l2_parser_thread;
-    L2parser* l2_parser;
-
-
-//    bool group_enable[CONDBNUM];
     QProgressBar *pb[BARNUM];
-    SystemKeyboardReadWrite *kb;
-
-
-    HotKeys* hk;
-
-    bool bEnableSound;
-//    bool bEnableModifier;
-
-    QString default_file_name;
 
     int ellipsed_time;
     static const char* StyleSheet[BARNUM+1];
     static const char* StyleSheetCheckBox[5];
     static const char* StyleSheetLabel[2];
 
+    L2Collection_Worker* l2collection_worker;
+    L2Collection* l2collection;
+
+    Clicker* clicker;
+
+    QString default_file_name;
+
+    SystemKeyboardReadWrite *kb;
+    HotKeys* hk;
+
+    bool bEnableSound;
+//    bool bEnableModifier;
+
+
+
     void enumerateL2();
-    bool isValidIndex(int index);
-    void enableGroup(int group, bool state);
+    void startL2enumerating();
+
 
 
 public slots:
     void showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime); /* */
-    void showParserStatus(int updatetime,  L2Window* l2w);
+    void showParserStatus(int updatetime);
+
     void cbDongleClicked(bool checked);
     void cbCtrlShiftClicked(bool checked);
     void cbKeyEnableClicked(bool checked);
@@ -102,18 +98,40 @@ public slots:
     void cmbCondSetListTextChanged(const QString &text);
     void keyGlobalPressed(DWORD vkCode);
     void keyGlobalReleased(DWORD vkCode);
-    void doActivateL2();
-    void pbSettingsClicked();
+
+    void popupWindow();
+
+    void resetL2WindowsCombo(); //+
+    void resetSettingsCombo();  //+
+    void resetKeys();  //+
+
 
 signals:
     //void setDongleState(int stt);
-    void setDongleGroupState(int i, bool state);
-    void doSetState(bool stt);
-    void doSetModifier(bool bCtrl, bool bShift);
-    void doSendKeyToDongle(int condition_index);
-    void doSaveAllToDongle();
-    void doJumpToBootloader();
-    void setActiveL2W(L2Window* l2w);
+
+
+    void resetL2Windows(QVector <HWND> *hwnd_list); //+
+
+    void setDongleState(bool);
+    void setModifiers(bool, bool);
+    void saveAllToDongle();
+    void rebootDongle();
+
+    void setActiveL2W(int index); //+
+    void findBars();
+
+    void setActiveSettings(int index); //+
+    void setNic(QString); //l2collection->setNic(text);
+    void addConfig(QString);
+    void loadConfig(QString);
+    void saveConfig(QString);
+    void loadProject(QString);
+    void saveProject(QString);
+    void setConditionState(int, bool);
+    void editCondition(int);
+
+    void setGroupState(int, bool);
+
 };
 
 #endif // MAINWINDOW_H

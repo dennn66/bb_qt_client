@@ -20,14 +20,14 @@ public:
 public slots:
     void process(); 	/*  создает и запускает построитель отчетов */
     void stop();    	/*  останавливает построитель отчетов */
-    void setGroupState(int i, bool state);
+    void doSetGroupState(int i, bool state);
     void doSetState(bool stt);
     void doSetModifier(bool bCtrl, bool bShift);
     void doSetMode(bool bMode);
     void doSendKeyToDongle(int condition_index);
     void doSaveAllToDongle();
     void doJumpToBootloader();
-    void setActiveL2W(L2Window* l2w);
+    //void setActiveL2W(L2Parser* l2w);
     void showStatus(unsigned char d_stt, unsigned char g_stt, int updatetime);
 
 signals:

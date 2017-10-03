@@ -4,7 +4,7 @@
 
 #include "box.h"
 #include "xpbar.h"
-#include "l2collection\l2window\processor\keycondition.h"
+#include "l2collection\l2window\conditionmanager\keycondition.h"
 
 
 

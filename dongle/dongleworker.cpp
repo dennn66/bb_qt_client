@@ -43,7 +43,7 @@ void DongleWorker::stop() {
     return ;
 }
 
-void DongleWorker::setGroupState(int i,  bool state){
+void DongleWorker::doSetGroupState(int i,  bool state){
     qDebug("DongleWorker::setGroupState(int i,  bool state): n %d st %d", i, state);
     unsigned char current_state;
     if(i < 8){
@@ -88,11 +88,13 @@ void DongleWorker::doJumpToBootloader(){
     dongle->doJumpToBootloader();
 }
 
-void DongleWorker::setActiveL2W(L2Window* l2w)
+/*
+void DongleWorker::setActiveL2W(L2Parser* l2w)
 {
     qDebug("DongleWorker::setActiveL2W");
     dongle->setActiveL2W(l2w);
 }
+*/
 
 void DongleWorker::showStatus(unsigned char d_stt, unsigned char g_stt,int updatetime)
 {

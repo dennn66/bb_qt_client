@@ -9,8 +9,6 @@ L2Parser::L2Parser(HWND winhwnd, QObject *parent) : QObject(parent)
     L2icon = NULL;
 
 
-
-
     //LOAD CONFIG BB.ini
     QSettings sett("bb.ini", QSettings::IniFormat);
 
@@ -26,67 +24,11 @@ L2Parser::L2Parser(HWND winhwnd, QObject *parent) : QObject(parent)
 
 
     resetBars();
-
-
-    KeyConditionsSet* conditionSet = new KeyConditionsSet();
-    cond_set_list.append(conditionSet);
-    project_file_name = "default.bbproj";
-    activeCondSet = 0;
-
     skillsread = false;
 
 }
 
-bool L2Parser::isSkillRdy(int num){
-    if(!isActiveWindow) return false;
-    return isSkillConditionRdy(num);
-}
 
-bool L2Parser::isSkillConditionRdy(int num){
-    KeyCondition* cond = this->getCurrentSettings()->condition[num];
-    if(!cond->getState()) return false;
-    if(getConditionSkill(num)){
-        if(!skillbar->isSkillReady(num)){
-            return false;
-        } else {
-            if((skillbar->whenUsed(num).msecsTo(QDateTime::currentDateTime())) < (cond->getConditionF(idCoolDown)*1000)) return false;
-        }
-    }
-
-
-
-    if(!cond->checkTargetCondition(this->getTargetType())){return false;}// Target Condition
-    if(!cond->checkTokenCondition(this->getTokenState())){return false;}// Star Condition
-
-
-    for(int barnum = idCP; barnum < idVP+1; barnum++){
-        if(!cond->checkBarCondition(barnum, getXP(barnum) )) return false;
-    }
-    if(getTargetType() == TARGETMOB){
-        if(!cond->checkBarCondition(idMobHP, getXP(idMobHP))) return false;
-    }
-    for(int barnum = idPet1HP; barnum < BARNUM; barnum++){
-        if(!cond->checkBarCondition(barnum, getXP(barnum) )) return false;
-    }
-    if(cond->getConditionB(idCheckPet)) if (cond->getConditionB(idPetState) != bPet) return false;
-
-    int parentskill = cond->getConditionI(idPauseSkillNum);
-    if(parentskill < 0xFF){
-        //if(!skillbar->isInReuse(parentskill)) return false;
-        //if((skillbar->whenUsed(parentskill).msecsTo(QDateTime::currentDateTime())) < (cond->getConditionF(idSkillPause)*1000)) return false;
-
-        if(skillbar->isSkillReady(parentskill)) return false;
-        if((skillbar->lastReady(parentskill).msecsTo(QDateTime::currentDateTime())) < (cond->getConditionF(idSkillPause)*1000)) return false;
-
-    }
-
-    //for(int i = 0; i < idNoUseSkillNum; i++){
-    //    if((cond->getConditionB(idNoUseSkillState+i) != false)){
-    //        if(skillbar->skillstate(i)) return false;
-    //    }
-    //}
-    return true;
-}
 
 void L2Parser::capture(){
     qDebug("L2Window::capture");
@@ -95,7 +37,7 @@ void L2Parser::capture(){
         qDebug("Window is iconic: %d", (int) hwnd);
         windowtopright.setX(0);
         windowtopright.setY(0);
-        isActiveWindow = false;
+        isActiveL2Window = false;
         return ;
     }
 
@@ -104,7 +46,7 @@ void L2Parser::capture(){
 
     HWND foreground = GetForegroundWindow();
 
-    isActiveWindow = (foreground == hwnd);
+    isActiveL2Window = (foreground == hwnd);
     windowtopright.setX(windowRect.right);
     windowtopright.setY(windowRect.top);
 
@@ -141,105 +83,10 @@ void L2Parser::capture(){
 }
 
 
-bool L2Parser::activateSettings(int index){
-    if(!isValidIndex(index))return false;
-    activeCondSet = index;
-    return true;
-}
-
-KeyConditionsSet* L2Parser::getCurrentSettings(){
-    if(!isValidIndex(activeCondSet))return NULL;
-    return cond_set_list[activeCondSet];
-}
-
-int L2Parser::LoadProject(QString file_name){
-    qDebug("L2Window::LoadProject");
-    QSettings sett(file_name, QSettings::IniFormat);
-
-    project_file_name = file_name;
-    qDebug("Proj File: %s", file_name.toStdString().c_str());
-    int proj_size = sett.value("MAIN/count", 0).toInt();
-    qDebug("count: %d", proj_size);
-    if(proj_size < 1) return status;
-
-    QString topic = "SETTINGS";
-
-    for(int i = 0;i < proj_size;i++){
-        QString var;
-        QTextStream varstream(&var);
-        var = topic;
-        varstream  << "/settings_file_name" <<  i+1;
-        qDebug("Topic: %s", var.toStdString().c_str());
-
-        QString settings_file_name = sett.value(var.toStdString().c_str(), "default.cfg").toString();
-        qDebug("Settings File: %s", settings_file_name.toStdString().c_str());
-
-        if(i < cond_set_list.size()){
-            activeCondSet = i;
-            LoadConfig(settings_file_name);
-            qDebug("Load: %d", i);
-
-        } else {
-            AddConfig(settings_file_name);
-            qDebug("Add: %d", i);
-        }
-        activeCondSet = 0;
-    }
-    while(proj_size < cond_set_list.size()){
-        KeyConditionsSet* tmp = cond_set_list.last();
-        qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
-        cond_set_list.removeLast();
-        delete(tmp);
-        qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
-    }
-    return status;
-}
-
-int L2Parser::SaveProject(QString file_name){
-
-    qDebug("L2Window::SaveProject");
-
-    QSettings sett(file_name, QSettings::IniFormat);
-
-    project_file_name = file_name;
-    qDebug("File: %s", file_name.toStdString().c_str());
-    sett.setValue("MAIN/count", cond_set_list.size());
-
-    QString topic = "SETTINGS";
-
-    for(int i = 0;i < cond_set_list.size();i++){
-        QString var;
-        QTextStream varstream(&var);
-        var = topic;
-        varstream  << "/settings_file_name" <<  i+1;
-        sett.setValue(var.toStdString().c_str(), cond_set_list[i]->settings_file_name);
-    }
-    return status;
-}
-
-int L2Parser::AddConfig(QString file_name){
-    qDebug("L2Window::LoadConfig");
-    KeyConditionsSet* conditionSet = new KeyConditionsSet();
-    cond_set_list.append(conditionSet);
-    activeCondSet = cond_set_list.size() - 1;
-    getCurrentSettings()->LoadConfig(file_name);
-    return status;
-}
-
-int L2Parser::LoadConfig(QString file_name){
-    qDebug("L2Window::LoadConfig");
-    getCurrentSettings()->LoadConfig(file_name);
-    return status;
-}
-
-int L2Parser::SaveConfig(QString file_name){
-
-    qDebug("L2Window::LoadConfig");
-    getCurrentSettings()->SaveConfig(file_name);
-    return status;
-}
 
 int L2Parser::check(){
+
+    qDebug("L2Parser::check()  Thread: %d", (int) QThread::currentThreadId());
 
     static bool iconic = false;
     static int iconiccounter = 0;
@@ -261,7 +108,7 @@ int L2Parser::check(){
     if(iconic) {
         windowtopright.setX(0);
         windowtopright.setY(0);
-        isActiveWindow = false;
+        isActiveL2Window = false;
         return status;
     }
 
@@ -395,7 +242,7 @@ int L2Parser::check(){
 
     if(skillbar->state()) {
         for(int n=0;n<KEYNUM;n++){
-            if(getConditionSkill(n) && getConditionState(n)){
+            if(1){//getConditionSkill(n) && getConditionState(n)){
                 skillbar->checkSkill(n, &image);
             }
         }
@@ -455,14 +302,6 @@ void L2Parser::resetBars(){
     status = L2_OFF;
 }
 
-QString L2Parser::getTitle(){
-    QString title;
-    QTextStream st(&title);
-    st << status;
-    return title;
-}
-
-
 
 int L2Parser::getXP(int index){
     if(index < idMobHP) {
@@ -511,3 +350,11 @@ int L2Parser::getXP(int index){
 */
 
 }
+
+
+ QString L2Parser::getTitle(){
+     QString title;
+     QTextStream st(&title);
+     st << getHWND();
+     return title;
+ }

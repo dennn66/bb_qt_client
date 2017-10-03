@@ -5,11 +5,10 @@
 #include <QtGui>
 #include <QVBoxLayout>
 
-#include "keysettingsdialog.h"
-#include "dongle.h"
+#include "l2collection\l2collection.h"
+#include "l2collection\l2window\conditionmanager\keysettingsdialog.h"
+#include "dongle\dongle.h"
 #include "SystemMouseHook.h"
-#include "l2window.h"
-
 
 namespace Ui {
 class Clicker;
@@ -20,7 +19,7 @@ class Clicker : public QWidget
     Q_OBJECT
 
 public:
-    explicit Clicker(QWidget *parent = 0);
+    explicit Clicker(L2Collection* l2c, QWidget *parent = 0);
     //Dongle* dongle;
     ~Clicker();
 protected:
@@ -34,7 +33,6 @@ private:
     void toggleGroup(int group);
     void enableGroup(int group, bool state);
     bool isUnderWidget(QWidget* widget, int x, int y);
-    static const char* StyleSheetCheckBox[5];
     SystemMouseHook *ms;
     int right_offset;
     int top_offset;
@@ -42,7 +40,7 @@ private:
     QImage* red_frame;
     bool bFindBarsIsPressed;
     bool bSettingsIsPressed;
-
+    L2Collection* l2collection;
 
 
 public slots:
@@ -50,7 +48,7 @@ public slots:
     void cbCtrlShiftClicked(bool checked);
     void cbKeyEnableBxClicked(bool checked);
     void showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime); /* */
-    void showParserStatus(int updatetime, L2Window* l2w);
+    void showParserStatus(int updatetime);
     void isL2Active(bool isActive, int right, int top);
     // Broadcasts a key has been pressed
     void keyLPressed(int x, int y);
@@ -59,12 +57,15 @@ public slots:
 
 
 signals:
-    void setDongleGroupState(int i, bool state);
-    void doSetState(bool stt);
-    void doSetModifier(bool bCtrl, bool bShift);
-    void doActivateL2();
-    void pbFindBarsClicked();
-    void pbSettingsClicked();
+    void setGroupState(int i, bool state);//+
+    void setDongleState(bool stt);//+
+    void setModifiers(bool bCtrl, bool bShift);//+
+    void findBars();//+
+    void popupSettings();//+
+
+
+
 };
 
 #endif // CLICKER_H
+

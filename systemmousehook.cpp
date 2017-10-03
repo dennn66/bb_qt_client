@@ -101,7 +101,7 @@ bool SystemMouseHook::setConnected(bool state)
 SystemMouseHook* SystemMouseHook::instance()
 {
     static SystemMouseHook* pMouseHookInstance = new SystemMouseHook();
-    qDebug("SystemMouseHook:::instance() failed\n");
+    //qDebug("SystemMouseHook:::instance() failed\n");
 
     return pMouseHookInstance;
 }

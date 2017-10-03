@@ -2,7 +2,7 @@
 #define DONGLE_H
 
 #include <windows.h>
-#include <hidapi.h>
+#include "hidapi.h"
 #include <stdio.h>
 #include <wchar.h>
 #include <string.h>
@@ -13,7 +13,7 @@
 #include <QSettings>
 
 
-#include "l2window.h"
+//#include "l2collection\l2window\l2parser.h"
 
 #define CMD_UNUSED1             0
 #define CMD_UNUSED2             1
@@ -51,7 +51,7 @@
 #define 	HID_KEYBOARD_MODIFIER_LEFTCTRL   (1 << 0)
 #define 	HID_KEYBOARD_MODIFIER_LEFTSHIFT   (1 << 1)
 
-
+#define KEYNUM 48
 
 // Set device status
 // 0 - Device Status
@@ -80,7 +80,7 @@ public:
     void doSendKeyToDongle(int condition_index);
     void doSaveAllToDongle();
     void doJumpToBootloader();
-    void setActiveL2W(L2Window* l2w);
+    //void setActiveL2W(L2Parser* l2w);
     void setDeviceState(unsigned char state){
         qDebug("Dongle::setDeviceState(unsigned int state): %d", state);
         target_device_state = state;
@@ -115,7 +115,7 @@ private:
     unsigned char target_device_state;
     unsigned char current_device_state;
     int activity;
-    L2Window* currentl2w;
+    //L2Parser* currentl2w;
     bool key_transfer_state[KEYNUM];
     void spin();
 

@@ -83,10 +83,12 @@
 
 #define KEY_DB_SIZE         223
 
-class KeyCondition
+class KeyCondition: public QObject
 {
+    Q_OBJECT
+
 public:
-    KeyCondition(QString button);
+    KeyCondition(QString button, QObject *parent = 0);
     ~KeyCondition();
 
     unsigned char string2keycode(QString Key);

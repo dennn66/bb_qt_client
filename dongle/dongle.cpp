@@ -4,7 +4,7 @@
 
 Dongle::Dongle(QObject *parent) : QObject(parent)
 {
-    currentl2w = NULL;
+    //currentl2w = NULL;
     state = STATE_DISCONNECTED;
     handle = NULL;
     activity = DO_NORMAL;
@@ -31,7 +31,7 @@ void Dongle::spin()
         connect();
     } else {
         if(state == STATE_ON || state == STATE_OFF) {
-            if(currentl2w != NULL){
+            if(1){ //currentl2w != NULL){
                 switch (activity) {
                 case DO_WRITEALLTODONGLE:
                     sendCMD_DELETE_ALL();
@@ -41,7 +41,7 @@ void Dongle::spin()
                         usleep(150*1000);
                     #endif
                     for(int i = 0; i< 48; i++){
-                        if(currentl2w->getCurrentSettings()->condition[i]->getState()){
+                        if(1){ //currentl2w->getCurrentSettings()->condition[i]->getState()){
                             sendKeyToDongle(i);
                             #ifdef WIN32
                                 Sleep(50);
@@ -109,12 +109,13 @@ void Dongle::process()
     emit finished();
 }
 
-void Dongle::setActiveL2W(L2Window* l2w)
+/*
+void Dongle::setActiveL2W(L2Parser* l2w)
 {
     qDebug("Dongle::setActiveL2W");
     currentl2w = l2w;
 }
-
+*/
 
 void Dongle::recieve_status() {
     qDebug("Dongle::recieve_status");
@@ -292,8 +293,8 @@ void Dongle::sendCMD_SET_SKILL_STATE(){
     hpbuf[6] = 0;
 
     for(int i = 0; i < 48; i++){  //48 keys
-        if(currentl2w->getConditionState(i)){
-            if(currentl2w->isSkillRdy(i)) {
+        if(1){//1currentl2w->getConditionState(i)){
+            if(1){//currentl2w->isSkillRdy(i)) {
                 int buf_byte = i >> 3;
                 int buf_bit = i - (buf_byte << 3);
                 unsigned char t = hpbuf[buf_byte] | ((unsigned char)(1 << buf_bit));
@@ -352,6 +353,7 @@ void Dongle::sendCMD_JUMP_TO_BOOTLOADER(){
 void Dongle::sendKeyToDongle(int condition_index){
     qDebug("Dongle::sendKeyToDongle(int condition_index, bool state)");
 
+    /*
     if(currentl2w == NULL)return;
     KeyCondition * cond = currentl2w->getCurrentSettings()->condition[condition_index];
 
@@ -369,6 +371,7 @@ void Dongle::sendKeyToDongle(int condition_index){
     } else {
         sendCMD_DELETE_NODE(condition_index);
     }
+    */
     key_transfer_state[condition_index] = true;
 }
 

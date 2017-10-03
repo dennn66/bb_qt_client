@@ -3,6 +3,7 @@
 //#include "dongle.h"
 #include <QApplication>
 #include <QTextCodec>
+#include <iostream>
 
 #define APP_NAME "BB"
 #define APP_VERSION "5.0"
@@ -75,7 +76,8 @@ int main(int argc, char *argv[])
 void customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg){
 
     Q_UNUSED(context);
-    //std::cout << msgType[type] << msg << std::endl;
+
+    //std::cout << msgType[type] << msg<< std::endl;
     if(logStream && logStream->device())
     {
         *logStream << msgType[type] << msg << "\r\n";

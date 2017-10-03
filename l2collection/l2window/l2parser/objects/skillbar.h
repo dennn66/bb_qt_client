@@ -2,7 +2,7 @@
 #define SKILLBAR_H
 
 #include <QObject>
-#include "l2collection\l2window\processor\keyconditionsset.h"
+#include "l2collection\l2window\conditionmanager\keyconditionsset.h"
 #include "box.h"
 #include "skill.h"
 

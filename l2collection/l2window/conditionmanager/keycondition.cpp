@@ -67,69 +67,7 @@ const char* KeyCondition::conditionb_tag[CONDBNUM] = {
     "$FStarState",
     "$FStateToken2",
     "$FStateToken3",
-    "$FStateToken4" //,
-
-/*
-    "$FNotUseSkill1",
-    "$FNotUseSkill2",
-    "$FNotUseSkill3",
-    "$FNotUseSkill4",
-
-    "$FNotUseSkill5",
-    "$FNotUseSkill6",
-    "$FNotUseSkill7",
-    "$FNotUseSkill8",
-
-    "$FNotUseSkill9",
-    "$FNotUseSkill10",
-    "$FNotUseSkill11",
-    "$FNotUseSkill12",
-
-    "$FNotUseSkill13",
-    "$FNotUseSkill14",
-    "$FNotUseSkill15",
-    "$FNotUseSkill16",
-
-    "$FNotUseSkill17",
-    "$FNotUseSkill18",
-    "$FNotUseSkill19",
-    "$FNotUseSkill20",
-
-    "$FNotUseSkill21",
-    "$FNotUseSkill22",
-    "$FNotUseSkill23",
-    "$FNotUseSkill24",
-
-    "$FNotUseSkill25",
-    "$FNotUseSkill26",
-    "$FNotUseSkill27",
-    "$FNotUseSkill28",
-
-    "$FNotUseSkill29",
-    "$FNotUseSkill30",
-    "$FNotUseSkill31",
-    "$FNotUseSkill32",
-
-    "$FNotUseSkill33",
-    "$FNotUseSkill34",
-    "$FNotUseSkill35",
-    "$FNotUseSkill36",
-
-    "$FNotUseSkill37",
-    "$FNotUseSkill38",
-    "$FNotUseSkill39",
-    "$FNotUseSkill40",
-
-    "$FNotUseSkill41",
-    "$FNotUseSkill42",
-    "$FNotUseSkill43",
-    "$FNotUseSkill44",
-
-    "$FNotUseSkill45",
-    "$FNotUseSkill46",
-    "$FNotUseSkill47",
-    "$FNotUseSkill48"
-*/
+    "$FStateToken4"
 };
 
 const char* KeyCondition::conditionb_name[CONDBNUM] = {
@@ -158,71 +96,10 @@ const char* KeyCondition::conditionb_name[CONDBNUM] = {
     "State",
     "State",
     "State",
-    "State" //,
-/*
-    "$FNotUseSkill1",
-    "$FNotUseSkill2",
-    "$FNotUseSkill3",
-    "$FNotUseSkill4",
-
-    "$FNotUseSkill5",
-    "$FNotUseSkill6",
-    "$FNotUseSkill7",
-    "$FNotUseSkill8",
-
-    "$FNotUseSkill9",
-    "$FNotUseSkill10",
-    "$FNotUseSkill11",
-    "$FNotUseSkill12",
-
-    "$FNotUseSkill13",
-    "$FNotUseSkill14",
-    "$FNotUseSkill15",
-    "$FNotUseSkill16",
-
-    "$FNotUseSkill17",
-    "$FNotUseSkill18",
-    "$FNotUseSkill19",
-    "$FNotUseSkill20",
-
-    "$FNotUseSkill21",
-    "$FNotUseSkill22",
-    "$FNotUseSkill23",
-    "$FNotUseSkill24",
-
-    "$FNotUseSkill25",
-    "$FNotUseSkill26",
-    "$FNotUseSkill27",
-    "$FNotUseSkill28",
-
-    "$FNotUseSkill29",
-    "$FNotUseSkill30",
-    "$FNotUseSkill31",
-    "$FNotUseSkill32",
-
-    "$FNotUseSkill33",
-    "$FNotUseSkill34",
-    "$FNotUseSkill35",
-    "$FNotUseSkill36",
-
-    "$FNotUseSkill37",
-    "$FNotUseSkill38",
-    "$FNotUseSkill39",
-    "$FNotUseSkill40",
-
-    "$FNotUseSkill41",
-    "$FNotUseSkill42",
-    "$FNotUseSkill43",
-    "$FNotUseSkill44",
-
-    "$FNotUseSkill45",
-    "$FNotUseSkill46",
-    "$FNotUseSkill47",
-    "$FNotUseSkill48"
-*/
+    "State"
 };
 
-KeyCondition::KeyCondition(QString button)
+KeyCondition::KeyCondition(QString button, QObject *parent) : QObject(parent)
 {
     FSet = false;
     ctrl = false;

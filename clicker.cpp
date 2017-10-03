@@ -1,18 +1,14 @@
 #include "clicker.h"
 #include "ui_clicker.h"
 
-const char* Clicker::StyleSheetCheckBox[5] = {
-    "QCheckBox::indicator  {background: #805300 ;}",  //YELLOW
-    "QCheckBox { color : white; }; QCheckBox::indicator  {background: #881D18 ;}",  //RED
-    "QCheckBox::indicator  {background: #03327E ;}",  //BLUE
-    "QCheckBox { color : white; }; QCheckBox::indicator  {background: #318A10 ;}",  //GREEN
-    "QCheckBox::indicator  {background: #7F7F7F ;}"   //GREY
-};
 
-Clicker::Clicker(QWidget *parent) :
+Clicker::Clicker(L2Collection* l2c, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Clicker)
 {
+    qDebug("Clicker::Clicker(L2Collection* l2c, QWidget *parent) Thread: %d", (int) QThread::currentThreadId());
+
+    l2collection = l2c;
     ui->setupUi(this);
     setWindowFlags( Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowTransparentForInput| Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
@@ -36,6 +32,7 @@ Clicker::Clicker(QWidget *parent) :
     p.setBrush(QBrush(QColor("#0100FF00"), Qt::SolidPattern));
     p.drawRect(QRect(2,2,46,18));
     p.end();
+
     red_frame = new QImage(QSize(51,23), QImage::Format_ARGB32);
     p.begin(red_frame);
     p.setPen(QPen(QColor("#44FF0000")));
@@ -80,13 +77,185 @@ Clicker::Clicker(QWidget *parent) :
     }
 
     ms = SystemMouseHook::instance();
-    ms->setConnected(true);
+
     connect(ms, SIGNAL(keyLPressed(int, int)), this, SLOT(keyLPressed(int, int)));
     connect(ms, SIGNAL(keyLReleased(int, int)), this, SLOT(keyLReleased(int, int)));
+
+
+    connect(this, SIGNAL(setGroupState(int, bool)       ), l2collection, SLOT(setGroupState(int, bool)       ), Qt::DirectConnection);
+    connect(this, SIGNAL(setDongleState(bool)           ), l2collection, SLOT(setDongleState(bool)           ), Qt::DirectConnection);
+    connect(this, SIGNAL(setModifiers(bool, bool)       ), l2collection, SLOT(setModifiers(bool, bool)       ), Qt::DirectConnection);
+    connect(this, SIGNAL(findBars()                     ), l2collection, SLOT(findBars()                     ), Qt::DirectConnection);
+
+    connect(l2collection, SIGNAL(showParserStatus(int)                                ), SLOT(showParserStatus(int)                         ), Qt::DirectConnection);
+    connect(l2collection, SIGNAL(showDongleStatus(unsigned char, unsigned char,int)), SLOT(showDongleStatus(unsigned char, unsigned char, int)), Qt::DirectConnection);
+    connect(l2collection, SIGNAL(isL2Active(bool, int, int)                           ), SLOT(isL2Active(bool, int, int)                         ), Qt::DirectConnection);
 }
 
-void Clicker::showParserStatus(int updatetime, L2Window* l2w){
+// Broadcasts a key has been pressed
+void Clicker::keyLPressed(int x, int y){
+    qDebug("Clicker::keyLPressed()");
+
+    QPoint wdg = this->pos();
+    if(x < (wdg.x())) return;
+    if(x > (wdg.x()+this->width())) return;
+    if(y < (wdg.y())) return;
+    if(y > (wdg.y()+this->height())) return;
+
+    if(isUnderWidget(ui->lbOnOff, x, y)) {
+        emit setDongleState(!ui->cbDongle->isChecked());
+    } else if(isUnderWidget(ui->lbCtrl, x, y)) {
+        emit setModifiers(!ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
+    } else if(isUnderWidget(ui->lbShift, x, y)) {
+        emit setModifiers(ui->cbCtrl->isChecked(), !ui->cbShift->isChecked());
+    } else if(isUnderWidget(ui->lbStatus, x, y)) {
+        bFindBarsIsPressed = true;
+        //if(!pressed_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*pressed_btn));
+    } else if(isUnderWidget(ui->lcd_ellipsed_time, x, y)) {
+        bSettingsIsPressed = true;
+        QPalette palette;
+        palette.setBrush(QPalette::Background,QBrush(QColor("#88FF0000"), Qt::SolidPattern));
+        ui->lcd_ellipsed_time->setPalette(palette);
+    } else {
+        QLabel* lbBx[4];
+        lbBx[0] = ui->lbB1;
+        lbBx[1] = ui->lbB2;
+        lbBx[2] = ui->lbB3;
+        lbBx[3] = ui->lbB4;
+
+        int i = 0;
+        while( (i < GROUPSNUM) && (!isUnderWidget(lbBx[i], x, y))){i++;}
+        if(i<GROUPSNUM){
+            enableGroup(i, !keyenable2[i]->isChecked());
+        }
+    }
+}
+
+bool Clicker::isUnderWidget(QWidget* widget, int x, int y){
+    QRect cb = widget->geometry();
+    QPoint wdg = this->pos();
+    qDebug("Clicker::keyLPressed() cb %d %d %d %d", cb.x(), cb.y(), cb.width(), cb.height());
+    qDebug("Clicker::keyLPressed() wdg %d %d", wdg.x(), wdg.y());
+    qDebug("Clicker::keyLPressed() clc %d %d", x, y);
+
+    return (
+                x > (wdg.x() + cb.x()) &&
+                x < (wdg.x() + cb.x()+ cb.width()) &&
+                y > (wdg.y() + cb.y()) &&
+                y < (wdg.y() + cb.y()+ cb.height())
+
+         );
+}
+
+// Broadcasts a key has been released
+void Clicker::keyLReleased(int x, int y){
+    qDebug("Clicker::keyLReleased()");
+
+    if(isUnderWidget(ui->lbStatus, x, y) && bFindBarsIsPressed) {
+           // Reset window
+        emit findBars();
+    }
+    if(bFindBarsIsPressed){
+        bFindBarsIsPressed = false;
+        //if(!released_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*released_btn));
+    }
+    if(isUnderWidget(ui->lcd_ellipsed_time, x, y)) {
+        emit popupSettings();
+    }
+    if(bSettingsIsPressed){
+            bSettingsIsPressed = false;
+            QPalette palette;
+            palette.setBrush(QPalette::Background,QBrush(QColor("#880000FF"), Qt::SolidPattern));
+            ui->lcd_ellipsed_time->setPalette(palette);
+    }
+}
+
+
+void Clicker::isL2Active(bool isActive, int right, int top)
+{
+    qDebug("Clicker::isActiveWindow(bool isActive, int right, int top): %d", isActive);
+    qDebug("Clicker::isActiveWindow(bool isActive, int right, int top) Thread: %d", (int) QThread::currentThreadId());
+
+    QPoint topright;
+    topright.setX(right-this->width()-right_offset);
+    topright.setY(top+top_offset);
+    this->move(topright);
+    ms->setConnected(isActive);
+
+    this->setVisible(this->underMouse() || isActive || (((HWND)(this->winId())) == ::GetForegroundWindow()));
+}
+
+
+void Clicker::cbKeyEnableBxClicked(bool checked){
+    qDebug("Clicker::cbKeyEnableBxClicked(bool checked): %d", checked);
+    QCheckBox* cb = dynamic_cast<QCheckBox*>(QObject::sender());
+    if( cb != NULL )
+    {
+        int i = 0;
+        while( (i < GROUPSNUM) && keyenable2[i] != cb){i++;}
+        if(i<GROUPSNUM){
+            enableGroup(i, checked);
+        }
+    }
+}
+
+void Clicker::cbDongleClicked(bool checked){
+    qDebug("Clicker::cbDongleClicked(bool checked): %d", checked);
+    emit setDongleState(checked);
+}
+
+void Clicker::cbCtrlShiftClicked(bool checked){
+    qDebug("Clicker::cbCtrlShiftClicked(bool checked: %d", checked);
+
+    emit setModifiers(ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
+}
+
+
+void Clicker::enableGroup(int group, bool state){
+    qDebug("Clicker::enableGroup(int group): %d", group);
+    keyenable2[group]->setChecked (state);
+    emit setGroupState(group, state);
+}
+
+
+void Clicker::showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime)
+{
+    //qDebug("Clicker::showDongleStatus");
+    //qDebug("BoredomBreaker::showDongleStatus");
+    qDebug("Clicker::showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime) Thread: %d", (int) QThread::currentThreadId());
+
+    ui->cbCtrl->setEnabled (false);
+
+    Q_UNUSED(updatetime);
+    for(int i=0;i<GROUPSNUM;i++)
+    {
+        keyenable2[i]->setChecked((g_stt & (1<<(i))) > 0);
+        keyenable2[i]->setEnabled (false);
+    }
+
+    ui->cbCtrl->setChecked((d_stt & (1 << DEVICE_CTRL)) > 0);
+    ui->cbShift->setChecked((d_stt & (1 << DEVICE_SHIFT)) > 0);
+
+    if((d_stt & (1<<DEVICE_STATUS)) == 0){
+        ui->cbDongle->setChecked(false);
+        ui->cbDongle->setEnabled(true);
+   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[1]); //RED
+    } else if((d_stt & (1<<DEVICE_MODE)) == 0){
+        ui->cbDongle->setChecked(true);
+        ui->cbDongle->setEnabled(true);
+   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[3]); //GREEN
+    } else {
+        ui->cbDongle->setChecked(true);
+        ui->cbDongle->setEnabled(true);
+   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[2]); //BLUE
+    }
+
+}
+
+void Clicker::showParserStatus(int updatetime){
     qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
+    qDebug("Clicker::showParserStatus(int updatetime) Thread: %d", (int) QThread::currentThreadId());
+
     static int ellipsed_time=0;
     ellipsed_time=((ellipsed_time*5)+updatetime)/6;
 
@@ -140,168 +309,9 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w){
 
     QImage* findbar_btn = new QImage(QSize(51,23), QImage::Format_ARGB32);
     *findbar_btn = *green_frame;
-    l2w->getStatusBtn(findbar_btn, bFindBarsIsPressed);
+    //fix l2collection-> getStatusBtn(findbar_btn, bFindBarsIsPressed);
     if(!findbar_btn->isNull()) ui->lbStatus->setPixmap(QPixmap::fromImage(*findbar_btn));
     delete findbar_btn;
-}
-// Broadcasts a key has been pressed
-void Clicker::keyLPressed(int x, int y){
-    qDebug("Clicker::keyLPressed()");
-
-    QPoint wdg = this->pos();
-    if(x < (wdg.x())) return;
-    if(x > (wdg.x()+this->width())) return;
-    if(y < (wdg.y())) return;
-    if(y > (wdg.y()+this->height())) return;
-
-    if(isUnderWidget(ui->lbOnOff, x, y)) {
-        emit doSetState(!ui->cbDongle->isChecked());
-    } else if(isUnderWidget(ui->lbCtrl, x, y)) {
-        emit doSetModifier(!ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
-    } else if(isUnderWidget(ui->lbShift, x, y)) {
-        emit doSetModifier(ui->cbCtrl->isChecked(), !ui->cbShift->isChecked());
-    } else if(isUnderWidget(ui->lbStatus, x, y)) {
-        bFindBarsIsPressed = true;
-        //if(!pressed_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*pressed_btn));
-    } else if(isUnderWidget(ui->lcd_ellipsed_time, x, y)) {
-        bSettingsIsPressed = true;
-        QPalette palette;
-        palette.setBrush(QPalette::Background,QBrush(QColor("#88FF0000"), Qt::SolidPattern));
-        ui->lcd_ellipsed_time->setPalette(palette);
-    } else {
-        QLabel* lbBx[4];
-        lbBx[0] = ui->lbB1;
-        lbBx[1] = ui->lbB2;
-        lbBx[2] = ui->lbB3;
-        lbBx[3] = ui->lbB4;
-
-        int i = 0;
-        while( (i < GROUPSNUM) && (!isUnderWidget(lbBx[i], x, y))){i++;}
-        if(i<GROUPSNUM){
-            enableGroup(i, !keyenable2[i]->isChecked());
-        }
-    }
-}
-
-bool Clicker::isUnderWidget(QWidget* widget, int x, int y){
-    QRect cb = widget->geometry();
-    QPoint wdg = this->pos();
-    qDebug("Clicker::keyLPressed() cb %d %d %d %d", cb.x(), cb.y(), cb.width(), cb.height());
-    qDebug("Clicker::keyLPressed() wdg %d %d", wdg.x(), wdg.y());
-    qDebug("Clicker::keyLPressed() clc %d %d", x, y);
-
-    return (
-                x > (wdg.x() + cb.x()) &&
-                x < (wdg.x() + cb.x()+ cb.width()) &&
-                y > (wdg.y() + cb.y()) &&
-                y < (wdg.y() + cb.y()+ cb.height())
-
-         );
-}
-
-// Broadcasts a key has been released
-void Clicker::keyLReleased(int x, int y){
-    qDebug("Clicker::keyLReleased()");
-
-    if(isUnderWidget(ui->lbStatus, x, y) && bFindBarsIsPressed) {
-           // Reset window
-        emit pbFindBarsClicked();
-    }
-    if(bFindBarsIsPressed){
-        bFindBarsIsPressed = false;
-        //if(!released_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*released_btn));
-    }
-    if(isUnderWidget(ui->lcd_ellipsed_time, x, y)) {
-        emit pbSettingsClicked();
-    }
-    if(bSettingsIsPressed){
-            bSettingsIsPressed = false;
-            QPalette palette;
-            palette.setBrush(QPalette::Background,QBrush(QColor("#880000FF"), Qt::SolidPattern));
-            ui->lcd_ellipsed_time->setPalette(palette);
-    }
-}
-
-
-void Clicker::isL2Active(bool isActive, int right, int top)
-{
-    qDebug("Clicker::isActiveWindow(bool isActive, int right, int top): %d", isActive);
-
-    QPoint topright;
-    topright.setX(right-this->width()-right_offset);
-    topright.setY(top+top_offset);
-    this->move(topright);
-
-    this->setVisible(this->underMouse() || isActive || (((HWND)(this->winId())) == ::GetForegroundWindow()));
-}
-
-
-void Clicker::cbKeyEnableBxClicked(bool checked){
-    qDebug("Clicker::cbKeyEnableBxClicked(bool checked): %d", checked);
-    QCheckBox* cb = dynamic_cast<QCheckBox*>(QObject::sender());
-    if( cb != NULL )
-    {
-        int i = 0;
-        while( (i < GROUPSNUM) && keyenable2[i] != cb){i++;}
-        if(i<GROUPSNUM){
-            enableGroup(i, checked);
-        }
-    }
-    emit doActivateL2();
-
-}
-
-void Clicker::cbDongleClicked(bool checked){
-    qDebug("Clicker::cbDongleClicked(bool checked): %d", checked);
-    emit doSetState(checked);
-    emit doActivateL2();
-}
-
-void Clicker::cbCtrlShiftClicked(bool checked){
-    qDebug("Clicker::cbCtrlShiftClicked(bool checked: %d", checked);
-
-    emit doSetModifier(ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
-    emit doActivateL2();
-}
-
-
-void Clicker::enableGroup(int group, bool state){
-    qDebug("Clicker::enableGroup(int group): %d", group);
-    keyenable2[group]->setChecked (state);
-    emit setDongleGroupState(group, state);
-}
-
-
-void Clicker::showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime)
-{
-    //qDebug("Clicker::showDongleStatus");
-    //qDebug("BoredomBreaker::showDongleStatus");
-    ui->cbCtrl->setEnabled (false);
-
-    Q_UNUSED(updatetime);
-    for(int i=0;i<GROUPSNUM;i++)
-    {
-        keyenable2[i]->setChecked((g_stt & (1<<(i))) > 0);
-        keyenable2[i]->setEnabled (false);
-    }
-
-    ui->cbCtrl->setChecked((d_stt & (1 << DEVICE_CTRL)) > 0);
-    ui->cbShift->setChecked((d_stt & (1 << DEVICE_SHIFT)) > 0);
-
-    if((d_stt & (1<<DEVICE_STATUS)) == 0){
-        ui->cbDongle->setChecked(false);
-        ui->cbDongle->setEnabled(true);
-   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[1]); //RED
-    } else if((d_stt & (1<<DEVICE_MODE)) == 0){
-        ui->cbDongle->setChecked(true);
-        ui->cbDongle->setEnabled(true);
-   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[3]); //GREEN
-    } else {
-        ui->cbDongle->setChecked(true);
-        ui->cbDongle->setEnabled(true);
-   //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[2]); //BLUE
-    }
-
 }
 
 

@@ -6,72 +6,80 @@
 
 QT       += core gui
 QT       += multimedia
+CONFIG       += console
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BBref8
+TARGET = BBref9
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc
 
-SOURCES += main.cpp \
+SOURCES += \
+    dongle/dongle.cpp \
+    dongle/dongleworker.cpp \
+    l2collection/l2window/l2parser/objects/barbox.cpp \
+    l2collection/l2window/l2parser/objects/box.cpp \
+    l2collection/l2window/l2parser/objects/l2graphicsobject.cpp \
+    l2collection/l2window/l2parser/objects/mainbox.cpp \
+    l2collection/l2window/l2parser/objects/mobbox.cpp \
+    l2collection/l2window/l2parser/objects/petbox.cpp \
+    l2collection/l2window/l2parser/objects/skill.cpp \
+    l2collection/l2window/l2parser/objects/skillbar.cpp \
+    l2collection/l2window/l2parser/objects/skillstate.cpp \
+    l2collection/l2window/l2parser/objects/token.cpp \
+    l2collection/l2window/l2parser/objects/xpbar.cpp \
+    l2collection/l2window/l2parser/l2parser.cpp \
+    l2collection/l2window/conditionmanager/keycondition.cpp \
+    l2collection/l2window/conditionmanager/keyconditionsset.cpp \
+    l2collection/l2window/conditionmanager/keysettingsdialog.cpp \
+    l2collection/l2window/conditionmanager/conditionmanager.cpp \
+    l2collection/l2collection.cpp \
     boredombreaker.cpp \
-    hid.c \
-    dongle.cpp \
-    l2window.cpp \
-    xpbar.cpp \
-    keycondition.cpp \
-    keysettingsdialog.cpp \
-    keyconditionsset.cpp \
-    systemkeyboardreadwrite.cpp \
-    l2parser.cpp \
     clicker.cpp \
-    dongleworker.cpp \
-    systemmousehook.cpp \
-    skillbar.cpp \
-    barbox.cpp \
-    l2graphicsobject.cpp \
-    box.cpp \
-    token.cpp \
-    mainbox.cpp \
-    mobbox.cpp \
-    skill.cpp \
-    skillstate.cpp \
-    petbox.cpp \
     hotkey.cpp \
-    hotkeys.cpp
+    hotkeys.cpp \
+    main.cpp \
+    systemkeyboardreadwrite.cpp \
+    systemmousehook.cpp \
+    dongle/hid.c \
+    l2collection/l2window/l2window.cpp \
+    l2collection/l2collection_worker.cpp
 
 HEADERS  += \
+    dongle/dongle.h \
+    dongle/dongleworker.h \
+    dongle/hidapi.h \
+    l2collection/l2window/l2parser/objects/barbox.h \
+    l2collection/l2window/l2parser/objects/box.h \
+    l2collection/l2window/l2parser/objects/l2graphicsobject.h \
+    l2collection/l2window/l2parser/objects/mainbox.h \
+    l2collection/l2window/l2parser/objects/mobbox.h \
+    l2collection/l2window/l2parser/objects/petbox.h \
+    l2collection/l2window/l2parser/objects/skill.h \
+    l2collection/l2window/l2parser/objects/skillbar.h \
+    l2collection/l2window/l2parser/objects/skillstate.h \
+    l2collection/l2window/l2parser/objects/token.h \
+    l2collection/l2window/l2parser/objects/xpbar.h \
+    l2collection/l2window/l2parser/l2parser.h \
+    l2collection/l2window/conditionmanager/keycondition.h \
+    l2collection/l2window/conditionmanager/keyconditionsset.h \
+    l2collection/l2window/conditionmanager/keysettingsdialog.h \
+    l2collection/l2window/conditionmanager/conditionmanager.h \
+    l2collection/l2collection.h \
+    l2collection/l2window/l2window.h \
+    l2collection/l2collection_worker.h\
     boredombreaker.h \
-    hidapi.h \
-    dongle.h \
-    l2window.h \
-    xpbar.h \
-    keycondition.h \
-    keysettingsdialog.h \
-    keyconditionsset.h \
-    systemkeyboardreadwrite.h \
-    l2parser.h \
     clicker.h \
-    dongleworker.h \
-    systemmousehook.h \
-    skillbar.h \
-    barbox.h \
-    l2graphicsobject.h \
-    box.h \
-    token.h \
-    mainbox.h \
-    mobbox.h \
-    skill.h \
-    skillstate.h \
-    petbox.h \
     hotkey.h \
-    hotkeys.h
+    hotkeys.h \
+    systemkeyboardreadwrite.h \
+    systemmousehook.h
 
 FORMS    += \
+    l2collection/l2window/conditionmanager/keysettingsdialog.ui \
     boredombreaker.ui \
-    keysettingsdialog.ui \
     clicker.ui
 
 LIBS += -lhid
