@@ -14,6 +14,7 @@ class Skill : public L2GraphicObject
 {
 public:
     explicit Skill(L2GraphicObject *parent = 0);
+    QRect getSkillRect(){ return frame;}
     QImage* getSkillImg(){ return &tool;}
     void setSkillImg(QImage* image){ tool =  image->copy(frame.x(), frame.y(), frame.width(), frame.height());}
     bool isSkillReady(){return skillrdy;}

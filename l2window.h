@@ -23,6 +23,7 @@
 #include "mainbox.h"
 #include "mobbox.h"
 #include "petbox.h"
+#include "groupmanager.h"
 
 
 #define L2_OFF false
@@ -47,6 +48,8 @@ public:
     QPoint windowtopright;
     bool isActiveWindow;
 
+    void setGroupState(int num, bool state){groupmanager->setGroupState(num, state);}
+
     int LoadProject(QString file_name);
     int SaveProject(QString file_name);
     int LoadConfig(QString file_name);
@@ -65,9 +68,19 @@ public:
         return true;
     }
     bool activateSettings(int index);
+    bool updateRule(int key_index);
     KeyConditionsSet* getCurrentSettings();
     bool isSkillConditionRdy(int num);
     bool isSkillRdy(int num);
+
+    bool is_dongle_skill_state_changed  (int i){return groupmanager->is_dongle_skill_state_changed(i);    }
+    bool get_dongle_skill_state         (int i){return groupmanager->get_dongle_skill_state( i);          }
+    bool is_visual_skill_state_changed  (int i){return groupmanager->is_visual_skill_state_changed( i);   }
+    bool get_visual_skill_state         (int i){return groupmanager->get_visual_skill_state( i);          }
+    bool get_visual_skill_group_state   (int i){return groupmanager->get_visual_skill_group_state( i);    }
+    bool is_group_state_changed         (int i){return groupmanager->is_group_state_changed( i);          }
+    bool get_group_state                (int i){return groupmanager->get_group_state( i);                 }
+
 
     bool getConditionSkill(int index){return getCurrentSettings()->condition[index]->getConditionB(idCheckSkillTimeout);}
 
@@ -80,7 +93,9 @@ public:
     void getBarStatistic();
     int getTargetType(){return mobbarbox->getTargetType();}
     void getStatusBtn(QImage* imgStatus, bool pressed);
-
+    void getStatusBk(QImage* imgStatus);
+    QRect getL2WRect(){return l2windowrect;}
+    QRect getSkillRect(int i){return skillbar->getSkillRect(i);}
 
     int activeCondSet;
     QVector <KeyConditionsSet*> cond_set_list;
@@ -89,6 +104,7 @@ public:
 private:
 
     QImage image;
+    GroupManager* groupmanager;
 
 
     HWND hwnd;
@@ -96,6 +112,7 @@ private:
     QIcon* L2icon;
     int image_width;
     int image_height;
+    QRect l2windowrect;
     bool skillsread;
 
     Mainbox* mainbarbox;

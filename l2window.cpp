@@ -8,9 +8,6 @@ L2Window::L2Window(HWND winhwnd, QObject *parent) : QObject(parent)
     image_height = 0;
     L2icon = NULL;
 
-
-
-
     //LOAD CONFIG BB.ini
     QSettings sett("bb.ini", QSettings::IniFormat);
 
@@ -21,6 +18,7 @@ L2Window::L2Window(HWND winhwnd, QObject *parent) : QObject(parent)
     mobbarbox  = new  Mobbox();
     petbarbox  = new  Petbox();
     skillbar = new Skillbar();
+    groupmanager = new GroupManager;
 
     mainbarbox->setSearchArea(QRect(0,0,20,50),50, 390);
 
@@ -37,6 +35,8 @@ L2Window::L2Window(HWND winhwnd, QObject *parent) : QObject(parent)
 
 }
 
+
+
 bool L2Window::isSkillRdy(int num){
     if(!isActiveWindow) return false;
     return isSkillConditionRdy(num);
@@ -45,6 +45,7 @@ bool L2Window::isSkillRdy(int num){
 bool L2Window::isSkillConditionRdy(int num){
     KeyCondition* cond = this->getCurrentSettings()->condition[num];
     if(!cond->getState()) return false;
+
     if(getConditionSkill(num)){
         if(!skillbar->isSkillReady(num)){
             return false;
@@ -53,11 +54,8 @@ bool L2Window::isSkillConditionRdy(int num){
         }
     }
 
-
-
     if(!cond->checkTargetCondition(this->getTargetType())){return false;}// Target Condition
     if(!cond->checkTokenCondition(this->getTokenState())){return false;}// Star Condition
-
 
     for(int barnum = idCP; barnum < idVP+1; barnum++){
         if(!cond->checkBarCondition(barnum, getXP(barnum) )) return false;
@@ -72,19 +70,9 @@ bool L2Window::isSkillConditionRdy(int num){
 
     int parentskill = cond->getConditionI(idPauseSkillNum);
     if(parentskill < 0xFF){
-        //if(!skillbar->isInReuse(parentskill)) return false;
-        //if((skillbar->whenUsed(parentskill).msecsTo(QDateTime::currentDateTime())) < (cond->getConditionF(idSkillPause)*1000)) return false;
-
         if(skillbar->isSkillReady(parentskill)) return false;
         if((skillbar->lastReady(parentskill).msecsTo(QDateTime::currentDateTime())) < (cond->getConditionF(idSkillPause)*1000)) return false;
-
     }
-
-    //for(int i = 0; i < idNoUseSkillNum; i++){
-    //    if((cond->getConditionB(idNoUseSkillState+i) != false)){
-    //        if(skillbar->skillstate(i)) return false;
-    //    }
-    //}
     return true;
 }
 
@@ -107,6 +95,10 @@ void L2Window::capture(){
     isActiveWindow = (foreground == hwnd);
     windowtopright.setX(windowRect.right);
     windowtopright.setY(windowRect.top);
+    l2windowrect.setLeft(windowRect.left);
+    l2windowrect.setRight(windowRect.right);
+    l2windowrect.setTop(windowRect.top);
+    l2windowrect.setBottom(windowRect.bottom);
 
     HDC hdcSrc = GetWindowDC(hwnd);
     if(hdcSrc == NULL){
@@ -144,11 +136,26 @@ void L2Window::capture(){
 bool L2Window::activateSettings(int index){
     if(!isValidIndex(index))return false;
     activeCondSet = index;
+    for(int key_index = 0; key_index < KEYNUM; key_index++){
+        updateRule(key_index);
+    }
     return true;
 }
 
+bool L2Window::updateRule(int key_index){
+    if(key_index >= KEYNUM) return false;
+    for(int groupcondnum = 0; groupcondnum < GROUPSNUM; groupcondnum++){
+        groupmanager->setGroupCondition(key_index, groupcondnum,  getCurrentSettings()->condition[key_index]->getGroupState(groupcondnum));
+    }
+
+    return true;
+}
+
+
 KeyConditionsSet* L2Window::getCurrentSettings(){
+    qDebug("KeyConditionsSet* L2Window::getCurrentSettings()");
     if(!isValidIndex(activeCondSet))return NULL;
+    qDebug("FIN KeyConditionsSet* L2Window::getCurrentSettings()");
     return cond_set_list[activeCondSet];
 }
 
@@ -183,15 +190,17 @@ int L2Window::LoadProject(QString file_name){
             AddConfig(settings_file_name);
             qDebug("Add: %d", i);
         }
-        activeCondSet = 0;
+        activateSettings(0);
     }
     while(proj_size < cond_set_list.size()){
         KeyConditionsSet* tmp = cond_set_list.last();
-        qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
+        //qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
         cond_set_list.removeLast();
         delete(tmp);
-        qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
+        //qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
     }
+    qDebug("FIN L2Window::LoadProject");
+
     return status;
 }
 
@@ -223,12 +232,15 @@ int L2Window::AddConfig(QString file_name){
     cond_set_list.append(conditionSet);
     activeCondSet = cond_set_list.size() - 1;
     getCurrentSettings()->LoadConfig(file_name);
+    activateSettings(activeCondSet);
     return status;
 }
 
 int L2Window::LoadConfig(QString file_name){
     qDebug("L2Window::LoadConfig");
     getCurrentSettings()->LoadConfig(file_name);
+    qDebug("FIN L2Window::LoadConfig");
+
     return status;
 }
 
@@ -262,6 +274,7 @@ int L2Window::check(){
         windowtopright.setX(0);
         windowtopright.setY(0);
         isActiveWindow = false;
+        groupmanager->isL2Active(isActiveWindow);
         return status;
     }
 
@@ -271,6 +284,7 @@ int L2Window::check(){
     bool invalidmob;
 
     capture();
+    groupmanager->isL2Active(isActiveWindow);
 
 
 
@@ -401,6 +415,10 @@ int L2Window::check(){
         }
     }
 
+    for(int i = 0; i < KEYNUM; i++){  //48 keys
+        groupmanager->set_l2_skill_state(i, isSkillConditionRdy(i));
+    }
+
 
 /*
     QImage pattern;
@@ -491,6 +509,68 @@ int L2Window::getXP(int index){
     mobbarbox->drawStatus(imgStatus, QRect(18,3,14,3));
     if(bEnablePet) petbarbox->drawStatus(imgStatus, QRect(12,12,6,6));
     skillbar->drawStatus(imgStatus, QRect(22,12,20,5));
+/*
+     for(int k=0; k<3;  k++){
+        for(int i=0; i<4;  i++){
+             for(int j=0; j<4; j++){
+                 QColor pixelcolor;
+                 if(!getCurrentSettings()->condition[j*12+k*4+i]->getState()){
+                     pixelcolor = QColor("#88442244");
+                 } else if(isSkillRdy(j*12+k*4+i)){
+                     pixelcolor = QColor("#8800FF00");
+
+                 } else {
+                     pixelcolor = QColor("#88FF0000");
+                 }
+                 imgStatus->setPixelColor(k*7+i+23,(3-j)+13,pixelcolor);
+             }
+         }
+     }
+*/
+
+}
+
+
+ void L2Window::getStatusBk(QImage* imgStatus){
+   // QPainter p;
+     QPainter p;
+    p.begin(imgStatus);
+        QPen skillpen;
+        skillpen.setWidth(3);
+        skillpen.setColor(QColor("#FF00FF00"));
+        p.setPen(skillpen);
+        p.setBrush(QBrush(QColor("#00FFFFFF"), Qt::SolidPattern));
+        QRect r = imgStatus->rect();
+        QRect mainframe(r.x(), r.y(), r.width()-3, r.height()-3);
+
+        p.drawRect(mainframe);
+        skillpen.setWidth(2);
+        for(int i = 0; i < KEYNUM; i++){  //48 keys
+            if(getConditionState(i)){
+                if(get_visual_skill_group_state(i)){
+                    if(get_visual_skill_state(i)) {
+                        skillpen.setColor(QColor("#FF00FF00"));
+                    } else {
+                        skillpen.setColor(QColor("#FFFFFFFF"));
+                    }
+                } else {
+                    skillpen.setColor(QColor("#88FF0000"));
+                }
+            } else {
+                skillpen.setColor(QColor("#00FFFFFF"));
+            }
+            p.setPen(skillpen);
+            p.drawRect(getSkillRect(i));
+        }
+
+
+
+    p.end();
+
+    //mainbarbox->drawStatus(imgStatus, QRect(3,3,10,5));
+    //mobbarbox->drawStatus(imgStatus, QRect(18,3,14,3));
+    //if(bEnablePet) petbarbox->drawStatus(imgStatus, QRect(12,12,6,6));
+    //skillbar->drawStatus(imgStatus, QRect(22,12,20,5));
 /*
      for(int k=0; k<3;  k++){
         for(int i=0; i<4;  i++){

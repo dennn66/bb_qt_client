@@ -12,8 +12,9 @@
 #include <QTextStream>
 #include <QSettings>
 
-
-#include "l2window.h"
+#define KEYNUM 48
+//#include "l2window.h"
+#include "donglekey.h"
 
 #define CMD_UNUSED1             0
 #define CMD_UNUSED2             1
@@ -77,10 +78,7 @@ class Dongle : public QObject
 public:
     explicit Dongle(QObject *parent = 0);
 
-    void doSendKeyToDongle(int condition_index);
-    void doSaveAllToDongle();
-    void doJumpToBootloader();
-    void setActiveL2W(L2Window* l2w);
+    void sendKeyToDongle(int condition_index);
     void setDeviceState(unsigned char state){
         qDebug("Dongle::setDeviceState(unsigned int state): %d", state);
         target_device_state = state;
@@ -88,35 +86,21 @@ public:
     }
     unsigned char getDeviceState(){return current_device_state;}
 
-    void setGroupState(unsigned char state){
-        qDebug("Dongle::setDeviceState(unsigned int state): %d", state);
-        target_group_state = state;
-        activity = DO_SETDEVICESTATE;
-    }
-    unsigned char getGroupState(){return current_group_state;}
-
 
  public slots:
     void process();
-
-
-signals:
-    void finished();
-    void error(QString err);
-    void showStatus(unsigned char d_stt, unsigned char g_stt, int updatetime);
 
 private:
     hid_device *handle;
     int state;
  //   bool bEnableTimingDebug;
-    unsigned char target_group_state;
-    unsigned char current_group_state;
+ //   unsigned char target_group_state;
+ //   unsigned char current_group_state;
 
     unsigned char target_device_state;
     unsigned char current_device_state;
     int activity;
-    L2Window* currentl2w;
-    bool key_transfer_state[KEYNUM];
+    DongleKey key[KEYNUM];
     void spin();
 
     int connect();
@@ -125,14 +109,27 @@ private:
     int send_key(unsigned char , bool Ctrl, bool Shift);
     int set_key_report(unsigned char key_code, bool Ctrl, bool Shift);
     int send_command(int device, int command, unsigned char* cmd_arg);
+
     void sendCMD_SET_STATE();
-    void sendCMD_ADD_NODE(int index, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime, unsigned int groups, bool Ctrl, bool Shift);
+    void sendCMD_ADD_NODE(int index, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift);
     void sendCMD_DELETE_NODE(int index);
     void sendCMD_DELETE_ALL();
-    void sendCMD_JUMP_TO_BOOTLOADER();
-    void sendCMD_ADD_NODE_CONDITION(unsigned char Key, unsigned char Type, unsigned char Min, unsigned char Max);
     void sendCMD_SET_SKILL_STATE();
-    void sendKeyToDongle(int condition_index);
+    void sendCMD_JUMP_TO_BOOTLOADER();
+public slots:
+    void setup_key(int index,  bool state, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift);
+    void set_dongle_skill_state(int num, bool state){key[num].set_skill_state(state);}
+    void set_operation_state(bool stt);
+    void set_modifier(bool bCtrl, bool bShift);
+    void set_mode(bool bMode);
+    void jump_to_bootloader();
+
+signals:
+    void finished();
+    void error(QString err);
+    void showStatus(unsigned char d_stt,  int updatetime);
+
+
 };
 
 #endif // DONGLE_H

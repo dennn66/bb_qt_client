@@ -249,7 +249,7 @@ void KeyCondition::setGroupState(int group_number, bool state){
 }
 
 bool KeyCondition::getGroupState(int group_number){
-    qDebug("KeyConditionsSet::getGroupState(int group, bool state)");
+    qDebug("KeyCondition::getGroupState(int group_number = %d)", group_number);
     return(conditionb[group_number+idGroupB1]);
 }
 
@@ -267,7 +267,7 @@ unsigned char KeyCondition::getTargetTypeBinaryCondition(){
 
 
 unsigned char KeyCondition::getGroupsBinaryCondition(){
-    qDebug("KeyCondition::getGroupState()");
+    qDebug("KeyCondition::getGroupsBinaryCondition()");
     unsigned char state = 0;
     for(int i = idGroupB1; i<idGroupB4+1; i++){
         state |= conditionb[i] << (i);

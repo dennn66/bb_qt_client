@@ -65,6 +65,12 @@ Clicker::Clicker(QWidget *parent) :
     right_offset = sett.value("MAIN/RightOffset", 25).toInt();
     top_offset = sett.value("MAIN/TopOffset", 60).toInt();
 
+    keyenable1[0] = ui->lbB1;
+    keyenable1[1] = ui->lbB2;
+    keyenable1[2] = ui->lbB3;
+    keyenable1[3] = ui->lbB4;
+
+
     keyenable2[0] = ui->cbB1;
     keyenable2[1] = ui->cbB2;
     keyenable2[2] = ui->cbB3;
@@ -85,10 +91,79 @@ Clicker::Clicker(QWidget *parent) :
     connect(ms, SIGNAL(keyLReleased(int, int)), this, SLOT(keyLReleased(int, int)));
 }
 
-void Clicker::showParserStatus(int updatetime, L2Window* l2w){
+
+void Clicker::updateGroupState(int num,  bool state){
+
+    if(num <GROUPSNUM)
+    {
+        keyenable2[num]->setChecked(state);
+        keyenable2[num]->setEnabled (true);
+        if(keyenable2[num]->isChecked()){
+            keyenable1[num]->setPixmap(QPixmap::fromImage(*green_frame));
+        } else {
+            keyenable1[num]->setPixmap(QPixmap::fromImage(*red_frame));
+        }
+    }
+}
+
+
+void Clicker::set_visual_skill_state(int num, bool state, bool enable, bool groupstate){
+    if(enable){
+        if(groupstate){
+            if(state) {
+                //keylabel[num]->setStyleSheet(StyleSheetLabel[3]); // GREEN
+
+            } else {
+                //keylabel[num]->setStyleSheet(StyleSheetLabel[1]); // RED
+            }
+        } else {
+            //keylabel[num]->setStyleSheet(StyleSheetLabel[5]); // WHITE
+        }
+    } else {
+       //keylabel[num]->setStyleSheet(StyleSheetLabel[4]); // GRAY
+    }
+}
+
+
+
+void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk){
     qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
     static int ellipsed_time=0;
+
+    this->setVisible(this->underMouse() || l2w->isActiveWindow || (((HWND)(this->winId())) == ::GetForegroundWindow()));
+
+    if(!isVisible()) return;
+
+    QTime updateTime;
+    updateTime.start();
+
+    QImage* findbar_btn = new QImage(QSize(51,23), QImage::Format_ARGB32);
+    *findbar_btn = *green_frame;
+    l2w->getStatusBtn(findbar_btn, bFindBarsIsPressed);
+    if(!findbar_btn->isNull()) ui->lbStatus->setPixmap(QPixmap::fromImage(*findbar_btn));
+    delete findbar_btn;
+
+    QRect l2rect = l2w->getL2WRect();
+    this->resize(l2rect.width(),l2rect.height());
+    this->move(l2rect.x(),l2rect.y());
+    ui->lbBackground->resize(l2rect.width(),l2rect.height());
+    ui->lbBackground->move(0,0);
+
+//    QImage* clicker_bk = new QImage(QSize(l2rect.width(),l2rect.height()), QImage::Format_ARGB32);
+    if(!clicker_bk.isNull()){
+//        l2w->getStatusBk(clicker_bk);
+        ui->lbBackground->setPixmap(QPixmap::fromImage(clicker_bk));
+//        delete clicker_bk;
+    }
+
+    QPoint topright;
+    topright.setX(this->width()-ui->fr_controls->width() - right_offset);
+    topright.setY(top_offset);
+
+    ui->fr_controls->move(topright);
+
     ellipsed_time=((ellipsed_time*5)+updatetime)/6;
+    //ellipsed_time=((ellipsed_time*5)+updateTime.elapsed())/6;
 
     QString label;
     QTextStream(&label) << ellipsed_time;
@@ -102,64 +177,21 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w){
     }
     ui->lcd_ellipsed_time->display(label);
 
-    if(ui->cbDongle->isChecked()){
-        ui->lbOnOff->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbOnOff->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbB1->isChecked()){
-        ui->lbB1->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbB1->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbB2->isChecked()){
-        ui->lbB2->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbB2->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbB3->isChecked()){
-        ui->lbB3->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbB3->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbB4->isChecked()){
-        ui->lbB4->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbB4->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbShift->isChecked()){
-        ui->lbShift->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbShift->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-    if(ui->cbCtrl->isChecked()){
-        ui->lbCtrl->setPixmap(QPixmap::fromImage(*green_frame));
-    } else {
-        ui->lbCtrl->setPixmap(QPixmap::fromImage(*red_frame));
-    }
-
-    QImage* findbar_btn = new QImage(QSize(51,23), QImage::Format_ARGB32);
-    *findbar_btn = *green_frame;
-    l2w->getStatusBtn(findbar_btn, bFindBarsIsPressed);
-    if(!findbar_btn->isNull()) ui->lbStatus->setPixmap(QPixmap::fromImage(*findbar_btn));
-    delete findbar_btn;
 }
+
+
+
+
 // Broadcasts a key has been pressed
 void Clicker::keyLPressed(int x, int y){
     qDebug("Clicker::keyLPressed()");
 
-    QPoint wdg = this->pos();
-    if(x < (wdg.x())) return;
-    if(x > (wdg.x()+this->width())) return;
-    if(y < (wdg.y())) return;
-    if(y > (wdg.y()+this->height())) return;
-
     if(isUnderWidget(ui->lbOnOff, x, y)) {
-        emit doSetState(!ui->cbDongle->isChecked());
+        emit set_operation_state(!ui->cbDongle->isChecked());
     } else if(isUnderWidget(ui->lbCtrl, x, y)) {
-        emit doSetModifier(!ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
+        emit set_modifier(!ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
     } else if(isUnderWidget(ui->lbShift, x, y)) {
-        emit doSetModifier(ui->cbCtrl->isChecked(), !ui->cbShift->isChecked());
+        emit set_modifier(ui->cbCtrl->isChecked(), !ui->cbShift->isChecked());
     } else if(isUnderWidget(ui->lbStatus, x, y)) {
         bFindBarsIsPressed = true;
         //if(!pressed_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*pressed_btn));
@@ -169,23 +201,28 @@ void Clicker::keyLPressed(int x, int y){
         palette.setBrush(QPalette::Background,QBrush(QColor("#88FF0000"), Qt::SolidPattern));
         ui->lcd_ellipsed_time->setPalette(palette);
     } else {
-        QLabel* lbBx[4];
-        lbBx[0] = ui->lbB1;
-        lbBx[1] = ui->lbB2;
-        lbBx[2] = ui->lbB3;
-        lbBx[3] = ui->lbB4;
 
         int i = 0;
-        while( (i < GROUPSNUM) && (!isUnderWidget(lbBx[i], x, y))){i++;}
-        if(i<GROUPSNUM){
-            enableGroup(i, !keyenable2[i]->isChecked());
+        while( (i < GROUPSNUM) && (!isUnderWidget(keyenable1[i], x, y))){i++;}
+        if(i<GROUPSNUM){            
+            emit setGroupState(i, !keyenable2[i]->isChecked());
         }
     }
+
+
+
 }
 
-bool Clicker::isUnderWidget(QWidget* widget, int x, int y){
+bool Clicker::isUnderWidget(QWidget* widget, int abs_x, int abs_y){
     QRect cb = widget->geometry();
     QPoint wdg = this->pos();
+    if(abs_x < (wdg.x())                )     return false;
+    if(abs_x > (wdg.x()+this->width())  )     return false;
+    if(abs_y < (wdg.y())                )     return false;
+    if(abs_y > (wdg.y()+this->height()) )     return false;
+    int x=abs_x - wdg.x();
+    int y=abs_y - wdg.y();
+    wdg = ui->fr_controls->pos();
     qDebug("Clicker::keyLPressed() cb %d %d %d %d", cb.x(), cb.y(), cb.width(), cb.height());
     qDebug("Clicker::keyLPressed() wdg %d %d", wdg.x(), wdg.y());
     qDebug("Clicker::keyLPressed() clc %d %d", x, y);
@@ -223,17 +260,6 @@ void Clicker::keyLReleased(int x, int y){
 }
 
 
-void Clicker::isL2Active(bool isActive, int right, int top)
-{
-    qDebug("Clicker::isActiveWindow(bool isActive, int right, int top): %d", isActive);
-
-    QPoint topright;
-    topright.setX(right-this->width()-right_offset);
-    topright.setY(top+top_offset);
-    this->move(topright);
-
-    this->setVisible(this->underMouse() || isActive || (((HWND)(this->winId())) == ::GetForegroundWindow()));
-}
 
 
 void Clicker::cbKeyEnableBxClicked(bool checked){
@@ -244,46 +270,36 @@ void Clicker::cbKeyEnableBxClicked(bool checked){
         int i = 0;
         while( (i < GROUPSNUM) && keyenable2[i] != cb){i++;}
         if(i<GROUPSNUM){
-            enableGroup(i, checked);
+            emit setGroupState(i, checked);
         }
     }
-    emit doActivateL2();
+
 
 }
 
 void Clicker::cbDongleClicked(bool checked){
     qDebug("Clicker::cbDongleClicked(bool checked): %d", checked);
-    emit doSetState(checked);
-    emit doActivateL2();
+    emit set_operation_state(checked);
+
 }
 
 void Clicker::cbCtrlShiftClicked(bool checked){
     qDebug("Clicker::cbCtrlShiftClicked(bool checked: %d", checked);
 
-    emit doSetModifier(ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
-    emit doActivateL2();
+    emit set_modifier(ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
+
 }
 
 
-void Clicker::enableGroup(int group, bool state){
-    qDebug("Clicker::enableGroup(int group): %d", group);
-    keyenable2[group]->setChecked (state);
-    emit setDongleGroupState(group, state);
-}
-
-
-void Clicker::showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime)
+void Clicker::showDongleStatus(unsigned char d_stt,  int updatetime)
 {
     //qDebug("Clicker::showDongleStatus");
-    //qDebug("BoredomBreaker::showDongleStatus");
+    if(!isVisible()) return;
+
     ui->cbCtrl->setEnabled (false);
 
     Q_UNUSED(updatetime);
-    for(int i=0;i<GROUPSNUM;i++)
-    {
-        keyenable2[i]->setChecked((g_stt & (1<<(i))) > 0);
-        keyenable2[i]->setEnabled (false);
-    }
+
 
     ui->cbCtrl->setChecked((d_stt & (1 << DEVICE_CTRL)) > 0);
     ui->cbShift->setChecked((d_stt & (1 << DEVICE_SHIFT)) > 0);
@@ -301,6 +317,24 @@ void Clicker::showDongleStatus(unsigned char d_stt, unsigned char g_stt, int upd
         ui->cbDongle->setEnabled(true);
    //     ui->cbDongle->setStyleSheet(StyleSheetCheckBox[2]); //BLUE
     }
+
+
+    if(ui->cbDongle->isChecked()){
+        ui->lbOnOff->setPixmap(QPixmap::fromImage(*green_frame));
+    } else {
+        ui->lbOnOff->setPixmap(QPixmap::fromImage(*red_frame));
+    }
+    if(ui->cbShift->isChecked()){
+        ui->lbShift->setPixmap(QPixmap::fromImage(*green_frame));
+    } else {
+        ui->lbShift->setPixmap(QPixmap::fromImage(*red_frame));
+    }
+    if(ui->cbCtrl->isChecked()){
+        ui->lbCtrl->setPixmap(QPixmap::fromImage(*green_frame));
+    } else {
+        ui->lbCtrl->setPixmap(QPixmap::fromImage(*red_frame));
+    }
+
 
 }
 

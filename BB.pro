@@ -10,7 +10,7 @@ QT       += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BBref8
+TARGET = BBref9
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc
@@ -27,7 +27,6 @@ SOURCES += main.cpp \
     systemkeyboardreadwrite.cpp \
     l2parser.cpp \
     clicker.cpp \
-    dongleworker.cpp \
     systemmousehook.cpp \
     skillbar.cpp \
     barbox.cpp \
@@ -39,8 +38,9 @@ SOURCES += main.cpp \
     skill.cpp \
     skillstate.cpp \
     petbox.cpp \
-    hotkey.cpp \
-    hotkeys.cpp
+    donglekey.cpp \
+    groupmanager.cpp \
+    groupcondition.cpp
 
 HEADERS  += \
     boredombreaker.h \
@@ -54,7 +54,6 @@ HEADERS  += \
     systemkeyboardreadwrite.h \
     l2parser.h \
     clicker.h \
-    dongleworker.h \
     systemmousehook.h \
     skillbar.h \
     barbox.h \
@@ -66,8 +65,9 @@ HEADERS  += \
     skill.h \
     skillstate.h \
     petbox.h \
-    hotkey.h \
-    hotkeys.h
+    donglekey.h \
+    groupmanager.h \
+    groupcondition.h
 
 FORMS    += \
     boredombreaker.ui \

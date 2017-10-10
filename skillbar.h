@@ -21,6 +21,7 @@ public:
     Skillbar(Box *parent = 0);
     QImage* getSkillImg(int n){return skill[n].getSkillImg();}
     QImage* setSkillImg(int n, QImage* image);
+    QRect getSkillRect(int n){return skill[n].getSkillRect();}
 
     //void checkSkillbar(QImage image);
     void checkSkill(int n, QImage* image);

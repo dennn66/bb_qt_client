@@ -18,19 +18,22 @@ public:
 
 public slots:
    void process();
-   void doActivateL2();
    void setActiveL2W(L2Window* l2w);
-
-//   void setGroupState(int i, bool state);
-
-
+   void setGroupState(int num,  bool state);
+   void redraw();
 
 signals:
    void finished();
    void error(QString err);
-   void showParserStatus(int updatetime, L2Window* l2w);
-   void isL2Active(bool isActive, int right, int top);
+   void showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk);
+//   void isL2Active(bool isActive);
+   //void set_condition_state(int num, bool state);
+//   void set_l2_skill_state(int num, bool state);
+//   void setGroupCondition(int skill_num, int condition_num,  bool state);
 
+   void set_dongle_skill_state(int num, bool state);
+   void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
+   void updateGroupState(int num,  bool state);
 
 };
 

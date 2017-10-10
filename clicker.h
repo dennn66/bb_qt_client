@@ -30,6 +30,7 @@ private:
 
 
    // bool group_enable[CONDBNUM];
+    QLabel *keyenable1[GROUPSNUM];
     QCheckBox *keyenable2[GROUPSNUM];
     void toggleGroup(int group);
     void enableGroup(int group, bool state);
@@ -49,19 +50,23 @@ public slots:
     void cbDongleClicked(bool checked);
     void cbCtrlShiftClicked(bool checked);
     void cbKeyEnableBxClicked(bool checked);
-    void showDongleStatus(unsigned char d_stt, unsigned char g_stt, int updatetime); /* */
-    void showParserStatus(int updatetime, L2Window* l2w);
-    void isL2Active(bool isActive, int right, int top);
+    void showDongleStatus(unsigned char d_stt, int updatetime); /* */
+    void showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk);
     // Broadcasts a key has been pressed
     void keyLPressed(int x, int y);
     // Broadcasts a key has been released
     void keyLReleased(int x, int y);
+    void updateGroupState(int num,  bool state);
+    void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
 
 
 signals:
-    void setDongleGroupState(int i, bool state);
-    void doSetState(bool stt);
-    void doSetModifier(bool bCtrl, bool bShift);
+    void set_operation_state(bool stt);
+    void set_modifier(bool bCtrl, bool bShift);
+
+    void setGroupState(int i, bool state);
+//    void doSetState(bool stt);
+//    void doSetModifier(bool bCtrl, bool bShift);
     void doActivateL2();
     void pbFindBarsClicked();
     void pbSettingsClicked();
