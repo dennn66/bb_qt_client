@@ -40,7 +40,9 @@ SOURCES += main.cpp \
     petbox.cpp \
     donglekey.cpp \
     groupmanager.cpp \
-    groupcondition.cpp
+    groupcondition.cpp \
+    hotkeys.cpp \
+    hotkey.cpp
 
 HEADERS  += \
     boredombreaker.h \
@@ -67,7 +69,9 @@ HEADERS  += \
     petbox.h \
     donglekey.h \
     groupmanager.h \
-    groupcondition.h
+    groupcondition.h \
+    hotkeys.h \
+    hotkey.h
 
 FORMS    += \
     boredombreaker.ui \
