@@ -10,7 +10,7 @@ QT       += multimedia
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BBref9
+TARGET = BBref11
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc

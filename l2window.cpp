@@ -153,9 +153,7 @@ bool L2Window::updateRule(int key_index){
 
 
 KeyConditionsSet* L2Window::getCurrentSettings(){
-    qDebug("KeyConditionsSet* L2Window::getCurrentSettings()");
     if(!isValidIndex(activeCondSet))return NULL;
-    qDebug("FIN KeyConditionsSet* L2Window::getCurrentSettings()");
     return cond_set_list[activeCondSet];
 }
 
@@ -386,14 +384,16 @@ int L2Window::check(){
 
     if(skillbar->state() && skillbar->getTimer()) if(!skillbar->checkBoxExist(&image)){
         skillbar->reset();
-        skillbar->findLeft(&image,  "patterns\\toolbar_left.bmp");
+        if(skillbar->findLeft(&image,  "patterns\\toolbar_left.bmp")) skillbar->initSkillbarFrame();
     }
 
 
 
     status = L2_ON;
-    if(bEnablePet) bPet = petbarbox->checkBoxExist(&image);
-    if(bEnablePet) petbarbox->checkPets(&image);
+    if(bEnablePet) {
+        bPet = petbarbox->checkBoxExist(&image);
+        petbarbox->checkPets(&image);
+    }
 
 
 
@@ -419,48 +419,6 @@ int L2Window::check(){
         groupmanager->set_l2_skill_state(i, isSkillConditionRdy(i));
     }
 
-
-/*
-    QImage pattern;
-    pattern.load("patterns\\mob_left_close.bmp");
-
-    for(int im_w = 0; im_w < image.width(); im_w++ ) {
-        for(int im_h = 0; im_h < image.height(); im_h++ ) {
-            //qDebug("Read pattern");
-            bool res = false;
-            for(int p_w = 0; p_w < pattern.width(); p_w++ ) {
-                for(int p_h = 0; p_h < pattern.height(); p_h++ ) {
-                    QRgb frame_pix = pattern.pixel(QPoint(p_w, p_h));
-                    if(frame_pix == Qt::white){
-                        res = true;
-                    } else {
-                        QRgb image_pix = image.pixel(QPoint(im_w+p_w, im_h+p_h));
-                        res = (image_pix == frame_pix);
-                    }
-                    if(!res) break;
-                }
-                if(!res) break;
-            }
-                    //bool res = CompareColors(frame_pix,image_pix, 5, false);
-
-        }
-    }
-
-
-    if(bWriteTiming)
-        if(fStream && fStream->device()){
-            *fStream << QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") << ";" << "Test image scaning" << ";" << QDateTime::currentDateTime().toMSecsSinceEpoch() << ";" << lasttime.msecsTo(QDateTime::currentDateTime())  << "\r\n";
-            lasttime = QDateTime::currentDateTime();
-        }
-
-*/
-
-/*
-    if(bWriteTiming){
-        testFile->close();
-    }
-*/
-
     return status;
 }
 
@@ -476,7 +434,7 @@ void L2Window::resetBars(){
 QString L2Window::getTitle(){
     QString title;
     QTextStream st(&title);
-    st << status;
+    st << hwnd;
     return title;
 }
 
@@ -493,6 +451,16 @@ int L2Window::getXP(int index){
     }
 }
 
+QRect L2Window::getBarRect(int index){
+    if(index < idMobHP) {
+        return mainbarbox->getBoxRect(index);
+    } else if(index < idPet1HP){
+        return mobbarbox->getBoxRect(index);
+    }else {
+        if(bEnablePet) return petbarbox->getBoxRect(index);
+        else return QRect(0, 0, 0, 0);
+    }
+}
 
  void L2Window::getStatusBtn(QImage* imgStatus, bool pressed){
     QPainter p;
@@ -509,35 +477,20 @@ int L2Window::getXP(int index){
     mobbarbox->drawStatus(imgStatus, QRect(18,3,14,3));
     if(bEnablePet) petbarbox->drawStatus(imgStatus, QRect(12,12,6,6));
     skillbar->drawStatus(imgStatus, QRect(22,12,20,5));
-/*
-     for(int k=0; k<3;  k++){
-        for(int i=0; i<4;  i++){
-             for(int j=0; j<4; j++){
-                 QColor pixelcolor;
-                 if(!getCurrentSettings()->condition[j*12+k*4+i]->getState()){
-                     pixelcolor = QColor("#88442244");
-                 } else if(isSkillRdy(j*12+k*4+i)){
-                     pixelcolor = QColor("#8800FF00");
-
-                 } else {
-                     pixelcolor = QColor("#88FF0000");
-                 }
-                 imgStatus->setPixelColor(k*7+i+23,(3-j)+13,pixelcolor);
-             }
-         }
-     }
-*/
-
 }
 
 
- void L2Window::getStatusBk(QImage* imgStatus){
+ void L2Window::getStatusBk(QImage* imgStatus, bool donglestate){
    // QPainter p;
      QPainter p;
     p.begin(imgStatus);
         QPen skillpen;
         skillpen.setWidth(3);
-        skillpen.setColor(QColor("#FF00FF00"));
+        if(donglestate){
+            skillpen.setColor(QColor("#FF00FF00"));
+        } else {
+            skillpen.setColor(QColor("#00000000"));
+        }
         p.setPen(skillpen);
         p.setBrush(QBrush(QColor("#00FFFFFF"), Qt::SolidPattern));
         QRect r = imgStatus->rect();
@@ -552,6 +505,7 @@ int L2Window::getXP(int index){
                         skillpen.setColor(QColor("#FF00FF00"));
                     } else {
                         skillpen.setColor(QColor("#FFFFFFFF"));
+                        skillpen.setWidth(3);
                     }
                 } else {
                     skillpen.setColor(QColor("#88FF0000"));
@@ -562,32 +516,18 @@ int L2Window::getXP(int index){
             p.setPen(skillpen);
             p.drawRect(getSkillRect(i));
         }
+        skillpen.setColor(QColor("#8800FF00"));
+        skillpen.setWidth(1);
+        p.setPen(skillpen);
 
-
-
+        for(int j = idCP; j < BARNUM; j++ ){
+            int xp = getXP(j);
+            if(xp >=0 && xp <= 100){
+                QRect xpr = getBarRect(j);
+                int x = xpr.x()+(xpr.width()*xp)/100;
+                int y = xpr.y()+xpr.height()/2;
+                p.drawRect(QRect(x-1,y-3,3,6));
+            }
+        }
     p.end();
-
-    //mainbarbox->drawStatus(imgStatus, QRect(3,3,10,5));
-    //mobbarbox->drawStatus(imgStatus, QRect(18,3,14,3));
-    //if(bEnablePet) petbarbox->drawStatus(imgStatus, QRect(12,12,6,6));
-    //skillbar->drawStatus(imgStatus, QRect(22,12,20,5));
-/*
-     for(int k=0; k<3;  k++){
-        for(int i=0; i<4;  i++){
-             for(int j=0; j<4; j++){
-                 QColor pixelcolor;
-                 if(!getCurrentSettings()->condition[j*12+k*4+i]->getState()){
-                     pixelcolor = QColor("#88442244");
-                 } else if(isSkillRdy(j*12+k*4+i)){
-                     pixelcolor = QColor("#8800FF00");
-
-                 } else {
-                     pixelcolor = QColor("#88FF0000");
-                 }
-                 imgStatus->setPixelColor(k*7+i+23,(3-j)+13,pixelcolor);
-             }
-         }
-     }
-*/
-
 }

@@ -115,9 +115,24 @@ void Dongle::setup_key(int index, bool state, unsigned char Key, float PauseTime
 
 void Dongle::set_modifier(bool bCtrl, bool bShift){
     qDebug("Dongle::doSetModifier(bool bCtrl, bool bShift): %d %d", bCtrl, bShift);
+    set_shift(bShift);
+    set_ctrl(bCtrl);
+}
+
+void Dongle::set_shift( bool bShift){
+    unsigned char state = (bShift)?(1 << DEVICE_SHIFT):0;
+    setDeviceState((getDeviceState() & (~(1 << DEVICE_SHIFT))) | state);
+    activity = DO_SETDEVICESTATE;
+}
+
+void Dongle::toggle_shift(){
+    bool bShift = (getDeviceState() & (1 << DEVICE_SHIFT )) > 0;
+    set_shift(!bShift);
+}
+
+void Dongle::set_ctrl(bool bCtrl){
     unsigned char state = (bCtrl)?(1 << DEVICE_CTRL):0;
-    state = (bShift)?(state | (1 << DEVICE_SHIFT)):state;
-    setDeviceState((getDeviceState() & (~((1 << DEVICE_CTRL) | (1 << DEVICE_SHIFT)))) | state);
+    setDeviceState((getDeviceState() & (~(1 << DEVICE_CTRL) )) | state);
     activity = DO_SETDEVICESTATE;
 }
 
@@ -132,6 +147,12 @@ void Dongle::set_operation_state(bool stt){
     unsigned char state = (stt)?(1 << DEVICE_STATUS):0;
     setDeviceState((getDeviceState() & (~(1 << DEVICE_STATUS))) | state);
     activity = DO_SETDEVICESTATE;
+}
+
+void Dongle::toggle_operation_state(){
+    unsigned char state = (getDeviceState() & (1 << DEVICE_STATUS));
+    bool stt = (state > 0);
+    set_operation_state(!stt);
 }
 
 // COMBO CMD ##################################################

@@ -76,21 +76,12 @@ Clicker::Clicker(QWidget *parent) :
     keyenable2[2] = ui->cbB3;
     keyenable2[3] = ui->cbB4;
 
-    connect(ui->cbDongle, SIGNAL(clicked(bool)), SLOT(cbDongleClicked(bool)));
-    connect(ui->cbCtrl, SIGNAL(clicked(bool)), SLOT(cbCtrlShiftClicked(bool)));
-    connect(ui->cbShift, SIGNAL(clicked(bool)), SLOT(cbCtrlShiftClicked(bool)));
-
-
-    for(int i = 0; i< GROUPSNUM; i++){
-        connect(keyenable2[i], SIGNAL(clicked(bool)), SLOT(cbKeyEnableBxClicked(bool)));
-    }
 
     ms = SystemMouseHook::instance();
     ms->setConnected(true);
     connect(ms, SIGNAL(keyLPressed(int, int)), this, SLOT(keyLPressed(int, int)));
     connect(ms, SIGNAL(keyLReleased(int, int)), this, SLOT(keyLReleased(int, int)));
 }
-
 
 void Clicker::updateGroupState(int num,  bool state){
 
@@ -105,7 +96,6 @@ void Clicker::updateGroupState(int num,  bool state){
         }
     }
 }
-
 
 void Clicker::set_visual_skill_state(int num, bool state, bool enable, bool groupstate){
     if(enable){
@@ -123,8 +113,6 @@ void Clicker::set_visual_skill_state(int num, bool state, bool enable, bool grou
        //keylabel[num]->setStyleSheet(StyleSheetLabel[4]); // GRAY
     }
 }
-
-
 
 void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk){
     qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
@@ -179,9 +167,6 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk)
 
 }
 
-
-
-
 // Broadcasts a key has been pressed
 void Clicker::keyLPressed(int x, int y){
     qDebug("Clicker::keyLPressed()");
@@ -189,9 +174,9 @@ void Clicker::keyLPressed(int x, int y){
     if(isUnderWidget(ui->lbOnOff, x, y)) {
         emit set_operation_state(!ui->cbDongle->isChecked());
     } else if(isUnderWidget(ui->lbCtrl, x, y)) {
-        emit set_modifier(!ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
+        emit set_ctrl(!ui->cbCtrl->isChecked());
     } else if(isUnderWidget(ui->lbShift, x, y)) {
-        emit set_modifier(ui->cbCtrl->isChecked(), !ui->cbShift->isChecked());
+        emit set_shift( !ui->cbShift->isChecked());
     } else if(isUnderWidget(ui->lbStatus, x, y)) {
         bFindBarsIsPressed = true;
         //if(!pressed_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*pressed_btn));
@@ -242,14 +227,14 @@ void Clicker::keyLReleased(int x, int y){
 
     if(isUnderWidget(ui->lbStatus, x, y) && bFindBarsIsPressed) {
            // Reset window
-        emit pbFindBarsClicked();
+        emit resetBars();
     }
     if(bFindBarsIsPressed){
         bFindBarsIsPressed = false;
         //if(!released_btn->isNull())ui->lbStatus->setPixmap(QPixmap::fromImage(*released_btn));
     }
     if(isUnderWidget(ui->lcd_ellipsed_time, x, y)) {
-        emit pbSettingsClicked();
+        emit popupBbWindow();
     }
     if(bSettingsIsPressed){
             bSettingsIsPressed = false;
@@ -258,38 +243,6 @@ void Clicker::keyLReleased(int x, int y){
             ui->lcd_ellipsed_time->setPalette(palette);
     }
 }
-
-
-
-
-void Clicker::cbKeyEnableBxClicked(bool checked){
-    qDebug("Clicker::cbKeyEnableBxClicked(bool checked): %d", checked);
-    QCheckBox* cb = dynamic_cast<QCheckBox*>(QObject::sender());
-    if( cb != NULL )
-    {
-        int i = 0;
-        while( (i < GROUPSNUM) && keyenable2[i] != cb){i++;}
-        if(i<GROUPSNUM){
-            emit setGroupState(i, checked);
-        }
-    }
-
-
-}
-
-void Clicker::cbDongleClicked(bool checked){
-    qDebug("Clicker::cbDongleClicked(bool checked): %d", checked);
-    emit set_operation_state(checked);
-
-}
-
-void Clicker::cbCtrlShiftClicked(bool checked){
-    qDebug("Clicker::cbCtrlShiftClicked(bool checked: %d", checked);
-
-    emit set_modifier(ui->cbCtrl->isChecked(), ui->cbShift->isChecked());
-
-}
-
 
 void Clicker::showDongleStatus(unsigned char d_stt,  int updatetime)
 {
@@ -337,7 +290,6 @@ void Clicker::showDongleStatus(unsigned char d_stt,  int updatetime)
 
 
 }
-
 
 Clicker::~Clicker()
 {

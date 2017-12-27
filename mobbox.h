@@ -56,17 +56,19 @@ public:
     }
 
     void checkTargetType(QImage* image) {
+        XPBar * hp = getXPBar(idMobHP);
+        XPBar * mp = getXPBar(idMobMP);
+
         if(!checkBoxExist(image)){
            targettype = NOTARGET;
+           if(hp != NULL && mp != NULL){
+               hp->setXP(XP_ERR);
+               mp->setXP(XP_ERR);
+           }
         } else {
-            //targettype = TARGETMOB;
-            //return;
-            XPBar * hp = getXPBar(idMobHP);
-            XPBar * mp = getXPBar(idMobMP);
             if(hp != NULL && mp != NULL){
                 mp->checkXPBar(image);
                 if(mp->getXP() < XP_ERR) {
-    //                getXPBar(idMobHP)->setXP(getXPBar(idHP)->getXP());
                     hp->checkXPBar(image);
                     targettype = TARGETMEORPET;
                 } else {

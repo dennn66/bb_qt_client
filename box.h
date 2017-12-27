@@ -29,7 +29,6 @@ public:
         QImage left_partial = left.copy(0, 0, left.width(),left.width());
         return checkPattern(topleft, image, &left_partial,10, 3, 5);
     }
-
     void drawStatus(QImage* imgStatus, QRect r);
 
 

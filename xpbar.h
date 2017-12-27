@@ -44,6 +44,7 @@ public:
     ~XPBar();
     bool getStatus();
     int getXP();
+    QRect getRect();
     void setXP(int i){XP = i;}
     int getY();
     int getBegin();

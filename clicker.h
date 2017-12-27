@@ -47,9 +47,6 @@ private:
 
 
 public slots:
-    void cbDongleClicked(bool checked);
-    void cbCtrlShiftClicked(bool checked);
-    void cbKeyEnableBxClicked(bool checked);
     void showDongleStatus(unsigned char d_stt, int updatetime); /* */
     void showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk);
     // Broadcasts a key has been pressed
@@ -62,14 +59,14 @@ public slots:
 
 signals:
     void set_operation_state(bool stt);
-    void set_modifier(bool bCtrl, bool bShift);
-
     void setGroupState(int i, bool state);
 //    void doSetState(bool stt);
 //    void doSetModifier(bool bCtrl, bool bShift);
     void doActivateL2();
-    void pbFindBarsClicked();
-    void pbSettingsClicked();
+    void resetBars();
+    void popupBbWindow();
+    void set_shift(bool bShift);
+    void set_ctrl(bool bCtrl);
 };
 
 #endif // CLICKER_H

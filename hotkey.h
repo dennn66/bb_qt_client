@@ -14,7 +14,8 @@
 #define B_B2    2
 #define B_B3    3
 #define B_B4    4
-#define B_NUM   5
+#define B_SHIFT 5
+#define B_NUM   6
 
 #define VK_NUM K_NUM*B_NUM
 
@@ -22,65 +23,25 @@ class HotKey : public QObject
 {
     Q_OBJECT
 public:
-    explicit HotKey(int id, bool modifier, DWORD modifierCode, DWORD activationKeyCode, QObject *parent = 0);
-
-    bool getModifier(){return bModifier;}
+    explicit HotKey(int id, DWORD modifierCode, DWORD activationKeyCode, QObject *parent = 0);
 
     bool checkReleasedModifier(DWORD vkCode){
         if(vkCode == vkModifierCode)  {
             bModifier = false;
+            return true;
         }
-        return bModifier;
+        return false;
     }
 
     void checkPressedModifier(DWORD vkCode){if(vkCode == vkModifierCode) bModifier = true;}
 
 
-    int checkKey(DWORD vkCode, bool bGlobalModifier){
-        if(vkCode == vkActivationKeyCode) {
-           if(bModifier  == true || (vkModifierCode == 0x00 && bGlobalModifier == false)){
-                int b_control = vkID / K_NUM;
-                int k_action = vkID - b_control * K_NUM;
-                if(b_control == B_ONOFF){
-                    switch(k_action){
-                        case K_DISABLE:
-                            qDebug("vkCode K_DISABLE");
-                            //emit doSetState(false);
-                            break;
-                        case K_ENABLE:
-                            //qDebug("vkCode K_ENABLE");
-                            //emit doSetState(true);
-                            break;
-                        case K_TOGGLE:
-                            //qDebug("vkCode K_TOGGLE");
-                            //emit doSetState(!ui->cbDongle->isChecked());
-                            break;
-                    }
-                } else {
-                    switch(k_action){
-                        case K_DISABLE:
-                            //qDebug("vkCode K_DISABLE");
-                            //enableGroup(b_control-1,false);
-                            break;
-                        case K_ENABLE:
-                            //qDebug("vkCode K_ENABLE");
-                            //enableGroup(b_control-1,true);
-                            break;
-                        case K_TOGGLE:
-                            //qDebug("vkCode K_TOGGLE");
-                            //enableGroup(b_control-1,!keyenable2[b_control-1]->isChecked());
-                            break;
-                    }
-                }
-            }
+    int checkKey(DWORD vkCode){
+        if(vkCode == vkActivationKeyCode && bModifier) {
            return vkID;
         }
-        return 0xFF;
+        return -1;
     }
-
-
-
-
 
 private:
     int vkID;

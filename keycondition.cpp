@@ -249,7 +249,6 @@ void KeyCondition::setGroupState(int group_number, bool state){
 }
 
 bool KeyCondition::getGroupState(int group_number){
-    qDebug("KeyCondition::getGroupState(int group_number = %d)", group_number);
     return(conditionb[group_number+idGroupB1]);
 }
 

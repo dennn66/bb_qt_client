@@ -10,8 +10,6 @@ Skillbar::Skillbar(Box *parent) : Box(parent)
 QImage* Skillbar::setSkillImg(int n, QImage* image){
     qDebug("L2Window::findTool(int n) %d", n);  //23
     if(state()) {
-        //QImage t = parceSkillbar(n, image);
-        //skill[n].setSkillImg(&t);
         skill[n].setSkillImg(image);
     }
     return skill[n].getSkillImg();
@@ -47,23 +45,6 @@ void Skillbar::checkSkill(int n, QImage* image){
         skill[n].checkSkill(image);
     }
 }
-
-/*
-QImage Skillbar::parceSkillbar(int n, QImage* image){
-    QImage skillimg;
-    if(state()) {
-        int k = n/12; //1
-        //11
-        int l = (n-k*12)/4; // 2
-        int m = n - k*12 - l*4;  //3
-        k = 4-k; // 3
-        int sell_x = TOOLLOFFSET + (l*4 + m)*TOOLSELL + (l*4 + m)*TOOLHGAP + l*TOOLH2GAP;
-        int sell_y = TOOLTOFFSET + k*TOOLSELL + k*TOOLVGAP;
-        skillimg = image->copy(topleft.rx()+sell_x, topleft.ry()+sell_y, TOOLSELL, TOOLSELL);
-    }
-    return skillimg;
-}
-*/
 
 void Skillbar::drawStatus(QImage* imgStatus, QRect r){
     QPainter p;

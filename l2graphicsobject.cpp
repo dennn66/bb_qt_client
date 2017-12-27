@@ -8,31 +8,13 @@ L2GraphicObject::L2GraphicObject(QObject *parent) : QObject(parent)
 
 // Compare random points between image and pattern
 QPoint L2GraphicObject::findPattern(QImage* source, QPoint topleft, QPoint bottomright, QImage* pattern, int delta){
-    qDebug("L2Window::findPattern");
+    qDebug("QPoint L2GraphicObject::findPattern(QImage* source  = (%d, %d), QPoint topleft = (%d, %d), QPoint bottomright = (%d, %d), QImage* pattern = (%d, %d), int delta = %d)", source->width(), source->height() , topleft.x() , topleft.y() , bottomright.x() , bottomright.y() , pattern->width(), pattern->height() , delta);
     if(topleft.rx() <0 ) topleft.setX(0);
     if(topleft.ry() <0 ) topleft.setY(0);
     if(bottomright.rx() < topleft.rx() ) bottomright.setX(topleft.rx());
     if(bottomright.ry() < topleft.ry() ) bottomright.setY(topleft.ry());
-    for(int im_w = topleft.rx(); im_w < bottomright.rx(); im_w++ ) {
-        for(int im_h = topleft.ry(); im_h < bottomright.ry(); im_h++ ) {
-            /*
-             bool res = false;
-             for(int p_w = 0; p_w < pattern.width(); p_w++ ) {
-                 for(int p_h = 0; p_h < pattern.height(); p_h++ ) {
-                     QRgb frame_pix = pattern.pixel(QPoint(p_w, p_h));
-                     if(frame_pix == Qt::white){
-                         res = true;
-                     } else {
-                         QRgb image_pix = source.pixel(QPoint(im_w+p_w, im_h+p_h));
-                         res = (image_pix == frame_pix);
-                     }
-                     if(!res) break;
-                 }
-                 if(!res) break;
-            }
-            if(res) return(QPoint(im_w, im_h));
-
-*/
+    for(int im_w = topleft.rx(); im_w < bottomright.rx() - delta; im_w++ ) {
+        for(int im_h = topleft.ry(); im_h < bottomright.ry() - delta; im_h++ ) {
             int count_total = 0;
             int count_match = 0;
 
@@ -46,19 +28,15 @@ QPoint L2GraphicObject::findPattern(QImage* source, QPoint topleft, QPoint botto
                         count_total++;;
                          QRgb image_pix = source->pixel(QPoint(im_w+w, im_h+h));
                          bool res = (frame_pix == image_pix);
-                         //bool res = CompareColors(frame_pix,image_pix, 5, false);
                          count_match += res;
                     }
                     if(count_total - count_match >= delta) break;
                 }
                 if(count_total - count_match >= delta) break;
             }
-
             if(count_total - count_match < delta){
                 return(QPoint(im_w, im_h));
             }
-
-
         }
     }
     return(QPoint(-1,-1));

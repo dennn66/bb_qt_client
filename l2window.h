@@ -93,7 +93,7 @@ public:
     void getBarStatistic();
     int getTargetType(){return mobbarbox->getTargetType();}
     void getStatusBtn(QImage* imgStatus, bool pressed);
-    void getStatusBk(QImage* imgStatus);
+    void getStatusBk(QImage* imgStatus, bool donglestate);
     QRect getL2WRect(){return l2windowrect;}
     QRect getSkillRect(int i){return skillbar->getSkillRect(i);}
 
@@ -126,6 +126,7 @@ private:
 
     void capture();
     bool findCPHPMP(QImage image);
+    QRect getBarRect(int index);
 
 signals:
 

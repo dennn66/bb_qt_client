@@ -120,7 +120,11 @@ public slots:
     void setup_key(int index,  bool state, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift);
     void set_dongle_skill_state(int num, bool state){key[num].set_skill_state(state);}
     void set_operation_state(bool stt);
+    void toggle_operation_state();
     void set_modifier(bool bCtrl, bool bShift);
+    void set_shift(bool bShift);
+    void toggle_shift();
+    void set_ctrl(bool bCtrl);
     void set_mode(bool bMode);
     void jump_to_bootloader();
 

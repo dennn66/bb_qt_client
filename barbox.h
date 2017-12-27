@@ -19,6 +19,10 @@ public:
         if(!barlist.isEmpty()) for(int index = 0; index < barlist.size();index++) if(barlist[index]->getbarID() == id) return barlist[index]->getXP();
         return XP_ERR;
     }
+    QRect  getBoxRect(int id){
+        if(!barlist.isEmpty()) for(int index = 0; index < barlist.size();index++) if(barlist[index]->getbarID() == id) return barlist[index]->getRect();
+        return QRect(0,0,0,0);
+    }
 
     XPBar*  getXPBar(int id){
         if(!barlist.isEmpty()) for(int index = 0; index < barlist.size();index++) if(barlist[index]->getbarID() == id) return barlist[index];

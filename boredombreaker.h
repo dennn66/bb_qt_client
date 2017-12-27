@@ -15,7 +15,7 @@
 #include <QProgressBar>
 #include <QGraphicsScene>
 #include <QKeyEvent>
-#include "SystemKeyboardReadWrite.h"
+#include <QListWidget>
 
 #include "l2window.h"
 #include "dongle.h"
@@ -39,70 +39,78 @@ class BoredomBreaker : public QMainWindow
 public:
     explicit BoredomBreaker(QWidget *parent = 0);
     ~BoredomBreaker();
-    void addL2Window(HWND hwnd);
+    void addL2HWND(HWND hwnd);
+
 private:
     Ui::BoredomBreaker *ui;
-    QVector <L2Window*> l2list;
+//    L2Window* currentl2w;
+//    int currentl2i;
 
-    QLabel *keylabel[KEYNUM];
-    QCheckBox *keyenable[KEYNUM];
+//    QLabel *keylabel[KEYNUM];
+//    QCheckBox *keyenable[KEYNUM];
     QCheckBox *keyenable2[GROUPSNUM];
-    QPushButton *keysettings[KEYNUM];
+//    QPushButton *keysettings[KEYNUM];
 
     Dongle* dongle;
     Clicker* clicker;
     L2parser* l2_parser;
+    QVector <HWND> hwnd_list;
 
-
+    QString project_file_name;
+    QString settings_file_name;
     QProgressBar *pb[BARNUM];
-    SystemKeyboardReadWrite *kb;
-
+    QListWidget* lstAllSkills;
+    QListWidgetItem *listNoUseSkill[KEYNUM];
 
     HotKeys* hk;
 
     bool bEnableSound;
-
-    QString default_file_name;
 
     int ellipsed_time;
     static const char* StyleSheet[BARNUM+1];
     static const char* StyleSheetCheckBox[5];
     static const char* StyleSheetLabel[6];
 
-    void enumerateL2();
-    bool isValidIndex(int index);
-    void emitKeySetup(int l2index, int key_index);
+//    bool isValidL2W();
+    void updateListbox(QVector <QString>  list, QComboBox* combo, int current_index);
+
+//    L2Window*   getCurrentL2W();
+//    int         getCurrentL2index();
 
 
 public slots:
+    void itemDoubleClicked(QListWidgetItem* item);
+    void itemClicked(QListWidgetItem* item);
     void showDongleStatus(unsigned char d_stt, int updatetime); /* */
     void showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk);
-    void cbDongleClicked(bool checked);
-    void cbCtrlShiftClicked(bool checked);
-    void cbKeyEnableClicked(bool checked);
     void cbKeyEnableBxClicked(bool checked);
     void pbLoadClicked();
     void pbSaveProjectClicked();
     void pbLoadProjectClicked();
     void pbSaveClicked();
     void pbAddClicked();
-    void pbToDongleClicked();
-    void pbJumpToBootloaderClicked();
-    void pbKeySettingsClicked();
-    void pbEnumerateClicked();
-    void pbFindBarsClicked();
     void cmbWinListActivated(int index);
     void cmbCondSetListActivated(int index);
-    void cmbCondSetListTextChanged(const QString &text);
-    void keyGlobalPressed(DWORD vkCode);
-    void keyGlobalReleased(DWORD vkCode);
-    void doActivateL2();
-    void pbSettingsClicked();
+    void popupL2Window(HWND hwnd);
+    void popupBbWindow();
     void updateGroupState(int num,  bool state);
     void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
 
+    void updateConditiosList(QVector <QString> list, int current_index, QString file_name);
+    void updateL2WindowsList(QVector <QString> list, int current_index, QString file_name);
+
+
+//    void setActiveL2W(L2Window* l2w, int l2_index);
+    void startL2enumerating();
+
 
 signals:
+    void toggleRuleState(int key_index);
+    void editRule(int key_index);
+    void changeNic(const QString &text);
+    void send_all_keys_to_dongle();
+
+
     void setGroupState(int i, bool state);
 
     void set_operation_state(bool stt);
@@ -110,10 +118,23 @@ signals:
     void setup_key(int index,  bool state, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift);
     void setGroupCondition(int skill_num, int condition_num,  bool state);
     void jump_to_bootloader();
-    void setActiveL2W(L2Window* l2w);
-    void redraw();
 
-    //void set_mode(bool bMode);
+    void setActiveL2Index  (int l2_index);
+    void setActiveCondIndex(int    index);
+
+
+    void redraw();
+    void addL2Window(HWND hwnd);
+
+    void loadConfig(QString file_name);
+    void saveProject(QString file_name);
+    void loadProject(QString file_name);
+    void saveConfig(QString file_name);
+    void addConfig(QString file_name);
+
+    void resetL2Windows(QVector <HWND> *hwnd_list); //+
+
+
 };
 
 #endif // MAINWINDOW_H

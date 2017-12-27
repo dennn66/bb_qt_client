@@ -6,6 +6,7 @@
 #include <QTextStream>
 
 #include "hotkey.h"
+#include "SystemKeyboardReadWrite.h"
 
 
 
@@ -17,36 +18,28 @@ class HotKeys : public QObject
 public:
     explicit HotKeys(QObject *parent = 0);
 
-    void keyPressed(DWORD vkCode){
-
-        for(int i = 0; i<  hklist.size(); i++){
-            hklist[i]->checkPressedModifier(vkCode);
-        }
-    }
-
-    int keyReleased(DWORD vkCode){
-        bool bGlobalModifier = false;
-        for(int i = 0; i< hklist.size(); i++){
-            bGlobalModifier = bGlobalModifier || hklist[i]->checkReleasedModifier(vkCode);
-        }
-        qDebug("vkCode bGlobalModifier = %d", bGlobalModifier);
 
 
-        for(int i = 0; i<  hklist.size(); i++){
-
-            int vkID = hklist[i]->checkKey(vkCode, bGlobalModifier);
-            if(vkID < 0xFF) return vkID;
-        }
-        return 0xFF;
-
-    }
 
 private:
     QVector <HotKey*> hklist;
     bool bEnableHotKey;
-signals:
-
+    SystemKeyboardReadWrite *kb;
 public slots:
+   void process();
+   void keyGlobalPressed(DWORD vkCode);
+   void keyGlobalReleased(DWORD vkCode);
+
+signals:
+   void finished();
+   void error(QString err);
+   void setGroupState(int i, bool state);
+   void toggleGroupState(int i);
+   void set_operation_state(bool stt);
+   void toggle_operation_state();
+   void set_shift(bool bShift);
+   void toggle_shift();
+
 };
 
 #endif // HOTKEYS_H
