@@ -49,7 +49,7 @@ public:
 
     }
     void checkToken(QImage* image) {
-        qDebug() <<  "void checkToken(QImage* image)";
+        //qDebug() <<  "void checkToken(QImage* image)";
         if(startopleft.rx() > 0 ){
             QImage icotmp2=image->copy(startopleft.rx()+3, startopleft.ry()+4, 6, 6);
             for(int j=0;j<6;j++) {
@@ -62,7 +62,7 @@ public:
                      token_color.setBlue((token_color.blue()+c1.blue())/2);
                 }
             }
-            qDebug() << "Token color: " << token_color.red() << " " << token_color.green() << " " << token_color.blue();
+            //qDebug() << "Token color: " << token_color.red() << " " << token_color.green() << " " << token_color.blue();
             if(CompareColors(token_color.rgb(),STAR_COLOR, 5)) {nToken = TOKEN_1;}
             else if(CompareColors(token_color.rgb(),HEART_COLOR, 5)) {nToken = TOKEN_2;}
             else if(CompareColors(token_color.rgb(),MOON_COLOR, 5)) {nToken = TOKEN_3;}
@@ -73,7 +73,7 @@ public:
             token_color.setRgb(qRgb(128, 128, 128));
             nToken = TOKEN_NONE;
         }
-         qDebug() << "Token number: " << nToken;
+         //qDebug() << "Token number: " << nToken;
 
     }
 
