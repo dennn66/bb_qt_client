@@ -263,11 +263,11 @@ BoredomBreaker::~BoredomBreaker()
 }
 
 void BoredomBreaker::updateConditiosList(QVector <QString> list, int current_index, QString settings){
-    qDebug()<< "BoredomBreaker::updateConditiosList(QVector <QString> list, int current_index, QString settings)";
+    //qDebug()<< "BoredomBreaker::updateConditiosList(QVector <QString> list, int current_index, QString settings)";
     updateListbox(list, ui->cmbCondSetList, current_index);
     settings_file_name = settings;
     ui->lbConfFileName->setText(settings_file_name);
-    qDebug()<<"ui->leNic->setText(ui->cmbCondSetList->currentText()) " << ui->cmbCondSetList->currentText();
+    //qDebug()<<"ui->leNic->setText(ui->cmbCondSetList->currentText()) " << ui->cmbCondSetList->currentText();
     ui->leNic->setText(ui->cmbCondSetList->currentText());
 }
 
@@ -276,11 +276,11 @@ void BoredomBreaker::updateL2WindowsList(QVector <QString> list, int current_ind
     project_file_name  = project;
 }
 void BoredomBreaker::updateListbox(QVector <QString>  list, QComboBox* combo, int _current_index){
-    qDebug()<<"BoredomBreaker::updateListbox(QVector <QString>  list, QComboBox* combo, int _current_index)";
+    //qDebug()<<"BoredomBreaker::updateListbox(QVector <QString>  list, QComboBox* combo, int _current_index)";
     int i=0;
 
     while((i < combo->count()) && (i < list.count())){
-       qDebug()<<"combo->setItemText(i, list[i]) " << i << " " << list[i];
+       //qDebug()<<"combo->setItemText(i, list[i]) " << i << " " << list[i];
        combo->setItemText(i, list[i]);
        i++;
     }
@@ -290,13 +290,13 @@ void BoredomBreaker::updateListbox(QVector <QString>  list, QComboBox* combo, in
     }
 
     while(i < list.count()){
-       qDebug()<<"combo->addItem(list[i]) " << i << " " << list[i];
+       //qDebug()<<"combo->addItem(list[i]) " << i << " " << list[i];
        combo->addItem(list[i]);
        i++;
     }
     int current_index = _current_index;
     if(current_index < 0 && combo->count() > 0) current_index = 0;
-    qDebug()<<"combo->setCurrentIndex(current_index)) " << current_index;
+    //qDebug()<<"combo->setCurrentIndex(current_index)) " << current_index;
     combo->setCurrentIndex(current_index);
 }
 
@@ -388,8 +388,8 @@ void BoredomBreaker::pbAddClicked(){
 
 void BoredomBreaker::cmbCondSetListActivated(int index){
 
-    qDebug() << "BoredomBreaker::cmbCondSetListActivated "<< index;
-    qDebug() << "ui->leNic->setText(ui->cmbCondSetList->currentText()) "<< ui->cmbCondSetList->currentText();
+    //qDebug() << "BoredomBreaker::cmbCondSetListActivated "<< index;
+    //qDebug() << "ui->leNic->setText(ui->cmbCondSetList->currentText()) "<< ui->cmbCondSetList->currentText();
 
     //ui->leNic->setText(ui->cmbCondSetList->currentText());
     emit setActiveCondIndex(index);

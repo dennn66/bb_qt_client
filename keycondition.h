@@ -117,42 +117,42 @@ public:
 #define AND_MODE false
 
     bool checkTokenCondition(int state){
-        qDebug() << "bool checkTokenCondition(int state = " << state << ")";
+        //qDebug() << "bool checkTokenCondition(int state = " << state << ")";
         bool mode = OR_MODE;
         bool is_condition_on = false;
 
         for(int i = 0; i < TokensNum; i++){
-            qDebug() << "check token " << i;
+            //qDebug() << "check token " << i;
             if(conditionb[idCheckToken+i]){
-                 qDebug() << "have condition on token " << i;
+                 //qDebug() << "have condition on token " << i;
                 is_condition_on = true;
                 if(conditionb[idTokenCondition+i] == false) mode = AND_MODE;
-                qDebug() << "if(conditionb[idTokenCondition+i] == false) mode =  " << mode;
+                //qDebug() << "if(conditionb[idTokenCondition+i] == false) mode =  " << mode;
             }
         }
 
-        qDebug() << "is_condition_on =  " << is_condition_on;
+        //qDebug() << "is_condition_on =  " << is_condition_on;
         if(!is_condition_on) return true;
 
         if(mode == OR_MODE) {
-             qDebug() << "OR_MODE";
+            //qDebug() << "OR_MODE";
             for(int i = 0; i < TokensNum; i++){
                 if(conditionb[idCheckToken+i]){
-                    qDebug() << "check token " << i;
+                    //qDebug() << "check token " << i;
                     if(conditionb[idTokenCondition+i] == (state == i)) {
-                        qDebug() << "return true ";
+                        //qDebug() << "return true ";
                         return true;
                     }
                 }
             }
             return false;
         } else { //AND_MODE
-            qDebug() << "AND_MODE";
+            //qDebug() << "AND_MODE";
             for(int i = 0; i < TokensNum; i++){
                 if(conditionb[idCheckToken+i]){
-                    qDebug() << "check token " << i;
+                    //qDebug() << "check token " << i;
                     if (!conditionb[idTokenCondition+i] == (state == i)) {
-                        qDebug() << "return false ";
+                        //qDebug() << "return false ";
                         return false;
                     }
                 }

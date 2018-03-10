@@ -136,7 +136,7 @@ void L2parser::editRule(int key_index){
 }
 
 void L2parser::changeNic(const QString &text){
-    qDebug()<< "L2parser::changeNic(const QString &text) " << text;
+    //qDebug()<< "L2parser::changeNic(const QString &text) " << text;
     if(!isValidL2W()) return;
     getCurrentL2W()->getCurrentSettings()->nic = text;
     doUpdateConditiosList();
@@ -154,7 +154,7 @@ void L2parser::doUpdateConditiosList(){
     if(!isValidL2W())return;
     QVector <QString> list;
     for(int i = 0 ; i < getCurrentL2W()->cond_set_list.count(); i++){
-        qDebug() << " list.append(getCurrentL2W()->cond_set_list[i]->nic) " << getCurrentL2W()->cond_set_list[i]->nic;
+        //qDebug() << " list.append(getCurrentL2W()->cond_set_list[i]->nic) " << getCurrentL2W()->cond_set_list[i]->nic;
         list.append(getCurrentL2W()->cond_set_list[i]->nic);
     }
     emit updateConditiosList(list, getCurrentL2W()->activeCondSet, getCurrentL2W()->getCurrentSettings()->settings_file_name);
