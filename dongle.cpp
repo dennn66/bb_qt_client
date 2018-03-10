@@ -23,7 +23,7 @@ Dongle::Dongle(QObject *parent) : QObject(parent)
 
 void Dongle::spin()
 {
-    qDebug("Spin dongle");
+    //qDebug("Spin dongle");
 
     if(state == STATE_DISCONNECTED){
         connect();
@@ -65,7 +65,7 @@ void Dongle::spin()
 
 void Dongle::process()
 {
-    qDebug("Start dongle checker");
+    //qDebug("Start dongle checker");
     sendCMD_DELETE_ALL();
     while(1){
         QTime updateTime;
@@ -75,7 +75,7 @@ void Dongle::process()
         try {
             spin();
         } catch(...) {
-            qDebug("Spin dongle failed");
+            //qDebug("Spin dongle failed");
             state = STATE_DISCONNECTED;
         }
 
@@ -103,18 +103,18 @@ void Dongle::jump_to_bootloader(){
 }
 
 void Dongle::setup_key(int index, bool state, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift){
-    qDebug("void Dongle::setup_key(int index = %d, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime, unsigned int groups, bool Ctrl, bool Shift)",  index);
+    //qDebug("void Dongle::setup_key(int index = %d, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime, unsigned int groups, bool Ctrl, bool Shift)",  index);
 
     key[index].setup_key( index,  Key,  PauseTime,  ReleaseTime,  ConditionTime, Ctrl,  Shift);
     key[index].set_condition_state(state);
     key[index].set_transfer_state(false);
     activity = DO_WRITEKEYTODONGLE;
-    qDebug("FIN void Dongle::setup_key");
+    //qDebug("FIN void Dongle::setup_key");
 }
 
 
 void Dongle::set_modifier(bool bCtrl, bool bShift){
-    qDebug("Dongle::doSetModifier(bool bCtrl, bool bShift): %d %d", bCtrl, bShift);
+    //qDebug("Dongle::doSetModifier(bool bCtrl, bool bShift): %d %d", bCtrl, bShift);
     set_shift(bShift);
     set_ctrl(bCtrl);
 }
@@ -136,8 +136,14 @@ void Dongle::set_ctrl(bool bCtrl){
     activity = DO_SETDEVICESTATE;
 }
 
+void Dongle::toggle_ctrl(){
+    bool bCtrl = (getDeviceState() & (1 << DEVICE_CTRL )) > 0;
+    set_shift(!bCtrl);
+}
+
+
 void Dongle::set_mode(bool bMode){
-    qDebug("DongleWorker::doSetMode(bool bMode): %d", bMode);
+    //qDebug("DongleWorker::doSetMode(bool bMode): %d", bMode);
     unsigned char state = (bMode)?(1 << DEVICE_MODE):0;
     setDeviceState((getDeviceState() & (~(1 << DEVICE_MODE))) | state);
     activity = DO_SETDEVICESTATE;
@@ -158,7 +164,7 @@ void Dongle::toggle_operation_state(){
 // COMBO CMD ##################################################
 
 void Dongle::sendKeyToDongle(int condition_index){
-    qDebug("Dongle::sendKeyToDongle(int condition_index, bool state)");
+    //qDebug("Dongle::sendKeyToDongle(int condition_index, bool state)");
 
      if(key[condition_index].get_condition_state()){
         sendCMD_ADD_NODE(
@@ -208,7 +214,7 @@ void Dongle::sendCMD_DELETE_NODE(int index){
 
 
 void Dongle::sendCMD_SET_STATE() {
-    qDebug("Dongle::sendCMD_SET_STATE");
+    //qDebug("Dongle::sendCMD_SET_STATE");
     unsigned char hpbuf[OUT_REPORT_SIZE-3];
     memset(hpbuf,0,sizeof(hpbuf));
     hpbuf[0] = 0b11111111;
@@ -218,7 +224,7 @@ void Dongle::sendCMD_SET_STATE() {
 
 void Dongle::sendCMD_SET_SKILL_STATE(){
     unsigned char hpbuf[OUT_REPORT_SIZE-3];
-    qDebug("Dongle::sendCMD_SET_SKILL_STATE");
+    //qDebug("Dongle::sendCMD_SET_SKILL_STATE");
     //memset(hpbuf,0,sizeof(hpbuf));
     hpbuf[0] = 0;
     hpbuf[1] = 0;
@@ -235,11 +241,11 @@ void Dongle::sendCMD_SET_SKILL_STATE(){
                 int buf_bit = i - (buf_byte << 3);
                 unsigned char t = hpbuf[buf_byte] | ((unsigned char)(1 << buf_bit));
                 hpbuf[buf_byte] =   t;
-                qDebug("Skill  %d = %d * 8 + %d = %d", i, buf_byte, buf_bit, hpbuf[buf_byte]);
+                //qDebug("Skill  %d = %d * 8 + %d = %d", i, buf_byte, buf_bit, hpbuf[buf_byte]);
             }
         }
     }
-    qDebug("Skill State %d %d %d %d %d %d", hpbuf[0], hpbuf[1], hpbuf[2], hpbuf[3], hpbuf[4], hpbuf[5]);
+    //qDebug("Skill State %d %d %d %d %d %d", hpbuf[0], hpbuf[1], hpbuf[2], hpbuf[3], hpbuf[4], hpbuf[5]);
     send_command(SERVICE_CONFIG, CMD_SET_SKILL_STATE, hpbuf);
 }
 
@@ -256,23 +262,38 @@ void Dongle::sendCMD_JUMP_TO_BOOTLOADER(){
 }
 
 // DIRECT KEY TRANSFER ##################################################
+/*
+#        if(Service == SERVICE_KEYBOARD){
+#			if(get_modeState() > 0) {
+#				USB_KeyboardReport_Data_t* newKeyboardReport = (USB_KeyboardReport_Data_t*)newKeyboardHIDReportBuffer;
+#				newKeyboardReport->KeyCode[0] = RawReport[1];
+#				newKeyboardReport->KeyCode[1] = RawReport[2];
+#				newKeyboardReport->KeyCode[2] = RawReport[3];
+#				newKeyboardReport->KeyCode[3] = RawReport[4];
+#				newKeyboardReport->KeyCode[4] = RawReport[5];
+#				newKeyboardReport->KeyCode[5] = RawReport[6]; //0x22 == "5";
+#				newKeyboardReport->Modifier = RawReport[7];
+#				expectKeyboardReport = 1;
+#			}
+#		}
+*/
 
 int Dongle::set_key_report(unsigned char key_code, bool Ctrl, bool Shift)
 {
-    qDebug("int Dongle::send_key(QString Key, bool Ctrl, bool Shift)command");
+    //qDebug("int Dongle::send_key(QString Key, bool Ctrl, bool Shift)command");
 
     unsigned char hpbuf[OUT_REPORT_SIZE-3];
     memset(hpbuf,0,sizeof(hpbuf));
      // Modifiers:
     if(Ctrl) hpbuf[5]  |= HID_KEYBOARD_MODIFIER_LEFTCTRL;
     if(Shift) hpbuf[5]  |= HID_KEYBOARD_MODIFIER_LEFTSHIFT;
-    send_command(SERVICE_CONFIG, key_code, hpbuf);
+    send_command(SERVICE_KEYBOARD, key_code, hpbuf);
     return 1;
 }
 
 int Dongle::send_key(unsigned char key_code, bool Ctrl, bool Shift)
 {
-    qDebug("int Dongle::send_key(QString Key, bool Ctrl, bool Shift)command");
+    //qDebug("int Dongle::send_key(QString Key, bool Ctrl, bool Shift)command");
     set_key_report(key_code, Ctrl, Shift);
     #ifdef WIN32
         Sleep(60);
@@ -284,11 +305,41 @@ int Dongle::send_key(unsigned char key_code, bool Ctrl, bool Shift)
     return(state);
 }
 
+// DIRECT MOUSE TRANSFER ##################################################
+/*
+#        if(Service == SERVICE_MOUSE){
+#			if(get_modeState() > 0) {
+#				USB_MouseReport_Data_t* newMouseReport = (USB_MouseReport_Data_t*)newMouseHIDReportBuffer;
+#				newMouseReport->X =	RawReport[1]-128;
+#				newMouseReport->Y =	RawReport[2]-128;
+#				newMouseReport->Button =	RawReport[3];
+#				expectMouseReport = 1;
+#			}
+#        }
+*/
+
+
+int Dongle::set_mouse_report(qint8 x, qint8 y, bool left, bool right, bool middle)
+{
+    //qDebug("int Dongle::set_mouse_report(qint8 x, qint8 y, bool left = false, bool right = false, bool middle = false)");
+
+    unsigned char hpbuf[OUT_REPORT_SIZE-3];
+    memset(hpbuf,0,sizeof(hpbuf));
+    hpbuf[0] = (unsigned char)(y+128);
+    //Buttons
+    if(left) hpbuf[1] |= (1<< USB_MOUSE_BTN_LEFT);
+    if(right) hpbuf[1] |= (1 << USB_MOUSE_BTN_RIGHT);
+    if(middle) hpbuf[1] |= (1 << USB_MOUSE_BTN_MIDDLE);
+
+    send_command(SERVICE_MOUSE, (unsigned char)(x+128), hpbuf);
+    return 1;
+}
+
 
 // USB COMMANDS
 
 void Dongle::recieve_status() {
-    qDebug("Dongle::recieve_status");
+    //qDebug("Dongle::recieve_status");
     unsigned char buf[IN_REPORT_SIZE];
 
     if(state == STATE_DISCONNECTED) return;
@@ -305,7 +356,7 @@ void Dongle::recieve_status() {
 
     if (res == -1)
     {
-        qDebug("Ошибка при  приёме данных");
+        qWarning("Ошибка при  приёме данных");
         disconnect();
     } else {
         current_device_state = buf[1] & DEVICE_MASK;
@@ -321,7 +372,7 @@ void Dongle::recieve_status() {
 
 int Dongle::connect()
 {
-    qDebug("Dongle::connect()");
+    //qDebug("Dongle::connect()");
 
     // Open the device using the VID, PID,
     // and optionally the Serial number.
@@ -329,11 +380,11 @@ int Dongle::connect()
     try {
         handle = hid_open(0x03eb, 0x204d, NULL);
     } catch(...) {
-        qDebug("unable to open device exeption\n");
+        qWarning("unable to open device exeption\n");
         state = STATE_DISCONNECTED;
     }
     if (!handle) {
-        qDebug("unable to open device\n");
+        qWarning("unable to open device\n");
         state = STATE_DISCONNECTED;
         return state;
     }
@@ -342,7 +393,7 @@ int Dongle::connect()
     try {
         hid_set_nonblocking(handle, 1);
     } catch(...) {
-       qDebug("unable to set hid_set_nonblocking\n");;
+       qWarning("unable to set hid_set_nonblocking\n");;
        state = STATE_DISCONNECTED;
     }
     state = STATE_OFF;
@@ -352,13 +403,13 @@ int Dongle::connect()
 
 int Dongle::disconnect()
 {
-    qDebug("Dongle::disconnect()");
+    //qDebug("Dongle::disconnect()");
 
     try {
         hid_close(handle);
     } catch(...) {
         ;;
-        qDebug("hid_close failed\n");
+        qWarning("hid_close failed\n");
         state = STATE_DISCONNECTED;
 
     }
@@ -369,7 +420,7 @@ int Dongle::disconnect()
         hid_exit();
     } catch(...) {
         ;;
-        qDebug("hid_exit failed\n");
+        qWarning("hid_exit failed\n");
         state = STATE_DISCONNECTED;
 
     }
@@ -380,7 +431,7 @@ int Dongle::disconnect()
 
 int Dongle::send_command(int device, int command, unsigned char* cmd_arg)
 {
-    qDebug("Dongle::send_command(int device, int command, unsigned char* cmd_arg)command: %d", command);
+    //qDebug("Dongle::send_command(int device, int command, unsigned char* cmd_arg)command: %d", command);
     int res;
     unsigned char buf[OUT_REPORT_SIZE];
 
@@ -400,7 +451,7 @@ int Dongle::send_command(int device, int command, unsigned char* cmd_arg)
             res = -1;
         }
         if (res < 0) {
-            qDebug("Unable to write()\n");
+            qWarning("Unable to write()\n");
             return disconnect();
         }
         state = current_state;

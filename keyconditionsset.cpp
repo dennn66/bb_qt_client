@@ -19,7 +19,7 @@ KeyConditionsSet::KeyConditionsSet()
 
 KeyConditionsSet::~KeyConditionsSet()
 {
-    qDebug("KeyConditionsSet::~KeyConditionsSet()");
+    //qDebug("KeyConditionsSet::~KeyConditionsSet()");
     for(int i = 0;i < KEYNUM;i++){
         delete condition[i];
     }
@@ -27,13 +27,13 @@ KeyConditionsSet::~KeyConditionsSet()
 
 
 int KeyConditionsSet::LoadConfig(QString file_name){
-    qDebug("KeyConditionsSet::LoadConfig");
+    //qDebug("KeyConditionsSet::LoadConfig");
 
     QSettings sett(file_name, QSettings::IniFormat);
     nic = sett.value("MAIN/NicName", "").toString();
-    qDebug("Nic: %s", nic.toStdString().c_str());
+    //qDebug("Nic: %s", nic.toStdString().c_str());
     settings_file_name = file_name;
-    qDebug("File: %s", file_name.toStdString().c_str());
+    //qDebug("File: %s", file_name.toStdString().c_str());
     for(int i = 0;i < KEYNUM;i++){
         QString topic = "CONDITION";
         QTextStream topicstream(&topic);
@@ -41,7 +41,7 @@ int KeyConditionsSet::LoadConfig(QString file_name){
 
         QString var;
         QTextStream varstream(&var);
-//        qDebug("topic: %s", topic.toStdString().c_str());
+        //qDebug("topic: %s", topic.toStdString().c_str());
         for(int j = idCoolDown; j<CONDFNUM; j++){
             var = topic;
             varstream  << KeyCondition::conditionf_tag[j];
@@ -81,23 +81,23 @@ int KeyConditionsSet::LoadConfig(QString file_name){
         varstream  << "$Buttons";
         condition[i]->setKeyString(sett.value(var.toStdString().c_str(), ".").toString());
         condition[i]->setKeyCode(condition[i]->string2keycode(condition[i]->getKeyString()));
-    //    qDebug("\"%s\",", condition[i]->getKeyString().toStdString().c_str());
+        //qDebug("\"%s\",", condition[i]->getKeyString().toStdString().c_str());
     }
-    qDebug("FIN KeyConditionsSet::LoadConfig");
+    //qDebug("FIN KeyConditionsSet::LoadConfig");
     return true;
 }
 
 int KeyConditionsSet::SaveConfig(QString file_name){
-    qDebug("KeyConditionsSet::LoadConfig");
+    //qDebug("KeyConditionsSet::LoadConfig");
 
     QSettings sett(file_name, QSettings::IniFormat);
 
     sett.setValue("MAIN/NicName", nic);
-    qDebug("Nic: %s", nic.toStdString().c_str());
+    //qDebug("Nic: %s", nic.toStdString().c_str());
 
 
     settings_file_name = file_name;
-    qDebug("File: %s", file_name.toStdString().c_str());
+    //qDebug("File: %s", file_name.toStdString().c_str());
     for(int i = 0;i < KEYNUM;i++){
         QString topic = "CONDITION";
         QTextStream topicstream(&topic);

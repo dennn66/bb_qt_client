@@ -17,7 +17,7 @@ public:
         }
     }
     int initbar(int id,  int yposition){
-        int index = Barbox::initbar(id, 19, 2, 32, 13, yposition);
+        int index = Barbox::initbar(id, 19, -3, 32, 13, yposition);
         if(index >= 0) barlist[index]->patternMethod = false;
         return index;
     }

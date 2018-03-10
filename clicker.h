@@ -54,7 +54,6 @@ public slots:
     // Broadcasts a key has been released
     void keyLReleased(int x, int y);
     void updateGroupState(int num,  bool state);
-    void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
 
 
 signals:

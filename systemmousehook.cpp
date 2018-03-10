@@ -10,22 +10,22 @@ SystemMouseHook::SystemMouseHook() :
 
 LRESULT CALLBACK SystemMouseHook::mouseProcedure(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    qDebug("mouseProcedure");
+    //qDebug("mouseProcedure");
 
     Q_UNUSED(nCode);
     MOUSEHOOKSTRUCT * pMouseStruct = (MOUSEHOOKSTRUCT *)lParam;
 
 
     if(pMouseStruct != nullptr) {
-        qDebug("pMouseStruct OK");
+        //qDebug("pMouseStruct OK");
 //pMouseStruct->pt.x
         switch (wParam) {
         case WM_LBUTTONDOWN:
-            qDebug("keyLPressed");
+            //qDebug("keyLPressed");
             emit SystemMouseHook::instance()->keyLPressed(pMouseStruct->pt.x, pMouseStruct->pt.y);
             break;
         case WM_LBUTTONUP:
-            qDebug("keyLReleased");
+            //qDebug("keyLReleased");
             emit SystemMouseHook::instance()->keyLReleased(pMouseStruct->pt.x, pMouseStruct->pt.y);
             break;
         default:
@@ -76,7 +76,7 @@ bool SystemMouseHook::setConnected(bool state)
 
         } catch(...) {
             ;;
-            qDebug("SystemMouseHook::SetWindowsHookEx failed\n");
+            qWarning("SystemMouseHook::SetWindowsHookEx failed\n");
 
         }
 
@@ -89,7 +89,7 @@ bool SystemMouseHook::setConnected(bool state)
             UnhookWindowsHookEx(mouseHook);
         } catch(...) {
             ;;
-            qDebug("SystemMouseHook::UnhookWindowsHookEx(keyboardHook) failed\n");
+            qWarning("SystemMouseHook::UnhookWindowsHookEx(keyboardHook) failed\n");
 
         }
         mouseHook = NULL;
@@ -101,7 +101,7 @@ bool SystemMouseHook::setConnected(bool state)
 SystemMouseHook* SystemMouseHook::instance()
 {
     static SystemMouseHook* pMouseHookInstance = new SystemMouseHook();
-    qDebug("SystemMouseHook:::instance() failed\n");
+    //qDebug("SystemMouseHook:::instance() failed\n");
 
     return pMouseHookInstance;
 }

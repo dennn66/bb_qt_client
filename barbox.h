@@ -14,13 +14,18 @@ class Barbox : public Box
 public:
     explicit Barbox(Box *parent = 0);
 
-
+    void drawOverlayedStatus(QPainter* p, QPen* skillpen);
     int  getBoxXP(int id){
         if(!barlist.isEmpty()) for(int index = 0; index < barlist.size();index++) if(barlist[index]->getbarID() == id) return barlist[index]->getXP();
         return XP_ERR;
     }
     QRect  getBoxRect(int id){
         if(!barlist.isEmpty()) for(int index = 0; index < barlist.size();index++) if(barlist[index]->getbarID() == id) return barlist[index]->getRect();
+        return QRect(0,0,0,0);
+    }
+
+    QRect  getBoxRectByIndex(int index){
+        if(!barlist.isEmpty() && index < barlist.size()) return barlist[index]->getRect();
         return QRect(0,0,0,0);
     }
 
@@ -63,7 +68,7 @@ public:
             for(int index = 0; index < barlist.size();index++){
                 if(barlist[index]->getbarID() == id){
                     barlist[index]->xBegin = topleft.rx()+leftmargin;
-                    barlist[index]->xEnd = topright.rx()-rightmargin;
+                    barlist[index]->xEnd = topright.rx()+rightmargin;
                     barlist[index]->yXP = topleft.ry()+topmargin+yposition*yinterval;
                     barlist[index]->setStatus(true);
                     return index;

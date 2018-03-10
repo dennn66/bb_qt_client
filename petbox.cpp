@@ -7,6 +7,8 @@ Petbox::Petbox( Barbox *parent) : Barbox( parent)
 
     appendbar(idPet1HP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idPet2HP,MobHP_COLOR, BK_MobHP_COLOR);
+    caption = "Pet Box";
+
     initBars();
 }
 

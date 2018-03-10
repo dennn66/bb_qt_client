@@ -10,7 +10,7 @@ SystemKeyboardReadWrite::SystemKeyboardReadWrite() :
 
 LRESULT CALLBACK SystemKeyboardReadWrite::keyboardProcedure(int nCode, WPARAM wParam, LPARAM lParam)
 {
-    qDebug("keyPressed: %d", nCode);
+    //qDebug("keyPressed: %d", nCode);
 
 
     // Check for a key down press
@@ -48,7 +48,7 @@ bool SystemKeyboardReadWrite::setConnected(bool state)
 
         } catch(...) {
             ;;
-            qDebug("SystemKeyboardReadWrite::SetWindowsHookEx failed\n");
+            //qDebug("SystemKeyboardReadWrite::SetWindowsHookEx failed\n");
 
         }
 
@@ -61,7 +61,7 @@ bool SystemKeyboardReadWrite::setConnected(bool state)
             UnhookWindowsHookEx(keyboardHook);
         } catch(...) {
             ;;
-            qDebug("SystemKeyboardReadWrite::UnhookWindowsHookEx(keyboardHook) failed\n");
+            qWarning("SystemKeyboardReadWrite::UnhookWindowsHookEx(keyboardHook) failed\n");
 
         }
         keyboardHook = NULL;
@@ -73,7 +73,7 @@ bool SystemKeyboardReadWrite::setConnected(bool state)
 SystemKeyboardReadWrite* SystemKeyboardReadWrite::instance()
 {
     static SystemKeyboardReadWrite* pKeyboardReadWriteInstance = new SystemKeyboardReadWrite();
-    qDebug("SystemKeyboardReadWrite:::instance()\n");
+    //qDebug("SystemKeyboardReadWrite:::instance()\n");
 
     return pKeyboardReadWriteInstance;
 }

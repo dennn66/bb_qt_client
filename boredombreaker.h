@@ -23,6 +23,9 @@
 #include "keysettingsdialog.h"
 #include "clicker.h"
 #include "hotkeys.h"
+#include "telegrambot.h"
+#include "eventprocessor.h"
+
 
 
 
@@ -54,20 +57,22 @@ private:
     Dongle* dongle;
     Clicker* clicker;
     L2parser* l2_parser;
+    TelegramBot* tele_bot;
+    EventProcessor* evprocessor;
+
     QVector <HWND> hwnd_list;
 
     QString project_file_name;
     QString settings_file_name;
-    QProgressBar *pb[BARNUM];
     QListWidget* lstAllSkills;
     QListWidgetItem *listNoUseSkill[KEYNUM];
 
     HotKeys* hk;
 
     bool bEnableSound;
+    bool bEnableTelegram;
 
     int ellipsed_time;
-    static const char* StyleSheet[BARNUM+1];
     static const char* StyleSheetCheckBox[5];
     static const char* StyleSheetLabel[6];
 
@@ -91,10 +96,9 @@ public slots:
     void pbAddClicked();
     void cmbWinListActivated(int index);
     void cmbCondSetListActivated(int index);
-    void popupL2Window(HWND hwnd);
+    void popupWindow(HWND hwnd);
     void popupBbWindow();
     void updateGroupState(int num,  bool state);
-    void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
 
     void updateConditiosList(QVector <QString> list, int current_index, QString file_name);
     void updateL2WindowsList(QVector <QString> list, int current_index, QString file_name);
@@ -136,5 +140,9 @@ signals:
 
 
 };
+
+
+//Register classes to use in QVariant
+Q_DECLARE_METATYPE(HWND)
 
 #endif // MAINWINDOW_H

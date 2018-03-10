@@ -49,15 +49,15 @@ int main(int argc, char *argv[])
 
     // Под Windows устанавливаем кодировку cp1251
     #ifdef Q_WS_WIN
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("Windows-1251"));
-    // Под остальными ОС - utf8
+        QTextCodec::setCodecForLocale(QTextCodec::codecForName("Windows-1251"));
+        // Под остальными ОС - utf8
     #else
-    QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
+        QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
     #endif
 
     //LOAD CONFIG BB.ini
     QSettings sett("bb.ini", QSettings::IniFormat);
-    bool bEnableDebug = sett.value("MAIN/EnableDebug", 1).toBool();
+    bool bEnableDebug = sett.value("MAIN/EnableDebug", 0).toBool();
 
     if(bEnableDebug) installLog();
 

@@ -23,6 +23,9 @@
 #include "mainbox.h"
 #include "mobbox.h"
 #include "petbox.h"
+#include "partybox.h"
+#include "resurectionbox.h"
+#include "targetbox.h"
 #include "groupmanager.h"
 
 
@@ -81,6 +84,12 @@ public:
     bool is_group_state_changed         (int i){return groupmanager->is_group_state_changed( i);          }
     bool get_group_state                (int i){return groupmanager->get_group_state( i);                 }
 
+    bool is_res_avialable               (     ){return resbox->getOkDetected();                           }
+    bool is_res_in_focus                (     ){return resbox->isOkInFocus();                             }
+    void setMouseCoord(int x, int y)    {resbox->setMouseCoord(x-l2windowrect.x(), y-l2windowrect.y());   }
+    qint8  get_res_DeltaX               (     ){return resbox->getDeltaX();                               }
+    qint8  get_res_DeltaY               (     ){return resbox->getDeltaY();                               }
+
 
     bool getConditionSkill(int index){return getCurrentSettings()->condition[index]->getConditionB(idCheckSkillTimeout);}
 
@@ -96,6 +105,7 @@ public:
     void getStatusBk(QImage* imgStatus, bool donglestate);
     QRect getL2WRect(){return l2windowrect;}
     QRect getSkillRect(int i){return skillbar->getSkillRect(i);}
+    QImage* getImage(){return &image;}
 
     int activeCondSet;
     QVector <KeyConditionsSet*> cond_set_list;
@@ -118,9 +128,17 @@ private:
     Mainbox* mainbarbox;
     Mobbox* mobbarbox;
     Petbox* petbarbox;
+    Partybox* partybox;
+    ResurrectionBox* resbox;
+    TargetBox* targetbox;
 
     bool bPet;
+    bool bParty;
+    bool bInRange;
     bool bEnablePet;
+    bool bEnableParty;
+    bool bSearchTarget;
+    bool bShowRange;
 //    bool bEnableTimingDebug;
 
 

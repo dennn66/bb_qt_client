@@ -2,21 +2,21 @@
 
 Skillbar::Skillbar(Box *parent) : Box(parent)
 {
-
+    caption = "Skill Box";
 }
 
 
 
 QImage* Skillbar::setSkillImg(int n, QImage* image){
-    qDebug("L2Window::findTool(int n) %d", n);  //23
-    if(state()) {
+    //qDebug("L2Window::findTool(int n) %d", n);  //23
+    if(getState()) {
         skill[n].setSkillImg(image);
     }
     return skill[n].getSkillImg();
 }
 
 void Skillbar::initSkillbarFrame(){
-    if(state()) {
+    if(getState()) {
         for(int n=0;n<KEYNUM;n++){
             int k = n/12; //1
             //11
@@ -31,7 +31,7 @@ void Skillbar::initSkillbarFrame(){
 }
 
 void Skillbar::initSkillbarImage(QImage* image){
-    if(state()) {
+    if(getState()) {
         for(int n=0;n<KEYNUM;n++){
             skill[n].setSkillImg(image);
         }
@@ -39,7 +39,7 @@ void Skillbar::initSkillbarImage(QImage* image){
 }
 
 void Skillbar::checkSkill(int n, QImage* image){
-    if(state()) {
+    if(getState()) {
         //QImage t = parceSkillbar(n, image);
         //skill[n].checkSkill(&t);
         skill[n].checkSkill(image);

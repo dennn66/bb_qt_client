@@ -2,19 +2,36 @@
 
 L2GraphicObject::L2GraphicObject(QObject *parent) : QObject(parent)
 {
-
+    detectmax = 0;
+    detectcounter = 0;
 }
 
 
 // Compare random points between image and pattern
-QPoint L2GraphicObject::findPattern(QImage* source, QPoint topleft, QPoint bottomright, QImage* pattern, int delta){
-    qDebug("QPoint L2GraphicObject::findPattern(QImage* source  = (%d, %d), QPoint topleft = (%d, %d), QPoint bottomright = (%d, %d), QImage* pattern = (%d, %d), int delta = %d)", source->width(), source->height() , topleft.x() , topleft.y() , bottomright.x() , bottomright.y() , pattern->width(), pattern->height() , delta);
-    if(topleft.rx() <0 ) topleft.setX(0);
-    if(topleft.ry() <0 ) topleft.setY(0);
-    if(bottomright.rx() < topleft.rx() ) bottomright.setX(topleft.rx());
-    if(bottomright.ry() < topleft.ry() ) bottomright.setY(topleft.ry());
-    for(int im_w = topleft.rx(); im_w < bottomright.rx() - delta; im_w++ ) {
-        for(int im_h = topleft.ry(); im_h < bottomright.ry() - delta; im_h++ ) {
+
+QPoint L2GraphicObject::findPattern(QImage* source, QRect sercharea, QImage* pattern, int delta)
+{
+    //qDebug("QPoint L2GraphicObject::findPattern(QImage* source  = (%d, %d), QPoint topleft = (%d, %d), QPoint bottomright = (%d, %d), QImage* pattern = (%d, %d), int delta = %d)", source->width(), source->height() , topleft.x() , topleft.y() , bottomright.x() , bottomright.y() , pattern->width(), pattern->height() , delta);
+    QPoint topleft;
+    QPoint bottomright;
+    topleft = sercharea.topLeft();
+    bottomright = sercharea.bottomRight();
+
+    if(bottomright.rx() + pattern->width()  >= source->width() ) bottomright.setX(source->width() - pattern->width());
+    if(bottomright.ry() + pattern->height()  >= source->height() ) bottomright.setY(source->height() - pattern->height());
+
+    if(topleft.rx() + pattern->width()  >= source->width() ) topleft.setX(source->width() - pattern->width());
+    if(topleft.ry() + pattern->height()  >= source->height() ) topleft.setY(source->height() - pattern->height());
+
+    if(     (topleft.rx() <0 )                  ||
+            (topleft.ry() <0 )                  ||
+            (bottomright.rx() <= topleft.rx() )  ||
+            (bottomright.ry() <= topleft.ry() )
+      ) return(QPoint(-1,-1));
+
+
+    for(int im_w = topleft.rx(); im_w < bottomright.rx(); im_w++ ) {
+        for(int im_h = topleft.ry(); im_h < bottomright.ry(); im_h++ ) {
             int count_total = 0;
             int count_match = 0;
 
@@ -41,7 +58,6 @@ QPoint L2GraphicObject::findPattern(QImage* source, QPoint topleft, QPoint botto
     }
     return(QPoint(-1,-1));
 }
-
 
 //Compare two colors with 'delta'
 bool L2GraphicObject::CompareColors(QRgb color1, QRgb color2, UINT8 delta, bool mode)

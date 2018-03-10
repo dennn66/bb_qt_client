@@ -4,30 +4,18 @@ Box::Box(L2GraphicObject *parent) : L2GraphicObject(parent)
 {
     //left = NULL;
     //right = NULL;
+    iErrDelta = 5;
+    caption = "";
     reset();
 }
 
-
-
-void Box::findBarbox(QImage* image, QImage* leftpattern,  QImage* rightpattern){
-    if(topleft.rx()<0){
-        topleft = findPattern(image, searchArea.topLeft(), searchArea.bottomRight(), leftpattern, ERR_DELTA);
-        qDebug("Box::boxtopleft %d %d", topleft.rx(), topleft.ry());
-    }
-
-    if((topright.rx()<0) && (topleft.rx()>0)){
-        topright = findPattern(image, QPoint(topleft.rx()+minimalwidth, topleft.ry()-10), QPoint(topleft.rx()+maxmalwidth, topleft.ry()+10), rightpattern, ERR_DELTA);
-        qDebug("Box::boxtopright %d %d", topright.rx(), topright.ry());
-    }
-}
-
 bool Box::findLeft(QImage* image, QString fimage){
-    if(topleft.rx()<0){
+    if(topleft.rx()<=0){
         QImage  pattern;
         pattern.load(fimage);
-        topleft = findPattern(image, searchArea.topLeft(), searchArea.bottomRight(), &pattern, ERR_DELTA);
+        topleft = findPattern(image, searchArea, &pattern, iErrDelta);
         if(topleft.rx()>0) left = pattern;
-        qDebug("Box::findLeft %d %d", topleft.rx(), topleft.ry());
+        //qDebug() << fimage << " Box::findLeft " <<  topleft.rx() << ", " << topleft.ry();
     }
     return topleft.rx()>0;
 }
@@ -36,9 +24,9 @@ bool Box::findRight(QImage* image, QString fimage){
     if((topright.rx()<0) && (topleft.rx()>0)){
         QImage  pattern;
         pattern.load(fimage);
-        topright = findPattern(image, QPoint(topleft.rx()+minimalwidth, topleft.ry()-10), QPoint(topleft.rx()+maxmalwidth, topleft.ry()+10), &pattern, ERR_DELTA);
+        topright = findPattern(image, getRightSearchArea(), &pattern, iErrDelta);
         if(topright.rx()>0) right = pattern;
-        qDebug("Box::findRight %d %d", topright.rx(), topright.ry());
+        //qDebug("Box::findRight %d %d", topright.rx(), topright.ry());
     }
     return topright.rx()>0;
 }
@@ -67,4 +55,36 @@ void Box::drawStatus(QImage* imgStatus, QRect r){
 
     painter->end();
     delete painter;
+}
+
+void Box::drawOverlayedStatus(QPainter* p, QPen* skillpen){
+    QString cap = caption;
+
+    p->setBrush(QBrush(QColor("#00FFFFFF"), Qt::SolidPattern));
+    if(!getLeftStatus())
+    {
+        skillpen->setColor(QColor("#88888888"));
+        p->setPen(*skillpen);
+        p->drawRect(getLeftSearchArea());
+        QTextStream (&cap) << " Left side";
+        p->drawText(getLeftSearchArea().topLeft(), cap);
+    } else {
+        skillpen->setColor(QColor("#8800FF00"));
+        p->setPen(*skillpen);
+        p->drawRect(getLeftMargin());
+
+        if(!getRightStatus())
+        {
+            skillpen->setColor(QColor("#88888888"));
+            p->setPen(*skillpen);
+            p->drawRect(getRightSearchArea());
+            QTextStream (&cap) << " Right side";
+            p->drawText(getRightSearchArea().topLeft(), cap);
+
+        } else {
+            skillpen->setColor(QColor("#3300FF00"));
+            p->setPen(*skillpen);
+            p->drawRect(getRightMargin());
+        }
+    }
 }

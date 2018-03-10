@@ -64,7 +64,6 @@ signals:
 
    void set_dongle_skill_state(int num, bool state);
 
-   void set_visual_skill_state(int num, bool state, bool enable, bool groupstate);
    void updateGroupState(int num,  bool state);
    void setup_key(int index,  bool state, unsigned char Key, float PauseTime, float ReleaseTime, float ConditionTime,  bool Ctrl, bool Shift);
    void setActiveL2W(L2Window* l2w, int l2_index);

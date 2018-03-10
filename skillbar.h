@@ -25,7 +25,7 @@ public:
 
     //void checkSkillbar(QImage image);
     void checkSkill(int n, QImage* image);
-    bool state(){return getLeftStatus();}
+    bool getState(){return getLeftStatus();}
     bool isSkillReady(int num){return skill[num].isSkillReady();}
     QDateTime whenUsed(int num){return skill[num].whenUsed();}
     bool isInReuse(int num){return skill[num].isInReuse();}

@@ -27,6 +27,7 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
     controli[idMinMobMP         ] = ui->leMobMPMin;
     controli[idMinPet1HP        ] = ui->lePet1HPMin;
     controli[idMinPet2HP        ] = ui->lePet2HPMin;
+    controli[idMinMemberHP      ] = ui->leMemberHPMin;
 
 
     controli[idMaxCP            ] = ui->leCPMax;
@@ -37,10 +38,17 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
     controli[idMaxMobMP         ] = ui->leMobMPMax;
     controli[idMaxPet1HP        ] = ui->lePet1HPMax;
     controli[idMaxPet2HP        ] = ui->lePet2HPMax;
+    controli[idMaxMemberHP      ] = ui->leMemberHPMax;
+
 
     controlb[idCheckSkillTimeout] = ui->cbCheckSkill;
+
+    controlb[idCheckRange       ] = ui->cbCheckRange;
+    controlb[idInRange          ] = ui->cbInRange;
+
     controlb[idCheckPet         ] = ui->cbCheckPet;
     controlb[idPetState         ] = ui->cbPetState;
+
     controlb[idCtrl             ] = ui->cbCtrl;
     controlb[idShift            ] = ui->cbShift;
 
@@ -55,11 +63,15 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
 
 
     controlb[idCheckSkillTimeout]->setChecked (condition->getConditionB(idCheckSkillTimeout));
-    controlb[idCheckPet]->setChecked (condition->getConditionB(idCheckPet));
-    controlb[idPetState]->setChecked (condition->getConditionB(idPetState));
-    controlb[idPetState]->setEnabled(condition->getConditionB(idCheckPet));
-    controlb[idCtrl]->setChecked (condition->getConditionB(idCtrl));
-    controlb[idShift]->setChecked (condition->getConditionB(idShift));
+
+    controlb[idCheckRange       ]->setChecked (condition->getConditionB(idCheckRange       ));
+    controlb[idInRange          ]->setChecked (condition->getConditionB(idInRange          ));
+
+    controlb[idCheckPet         ]->setChecked (condition->getConditionB(idCheckPet         ));
+    controlb[idPetState         ]->setChecked (condition->getConditionB(idPetState         ));
+
+    controlb[idCtrl             ]->setChecked (condition->getConditionB(idCtrl             ));
+    controlb[idShift            ]->setChecked (condition->getConditionB(idShift            ));
 
     connect(ui->cbKeyMnemonic, SIGNAL(activated(int)), SLOT(cbKeyMnemonicActivated(int)));
     connect(ui->pbReload, SIGNAL(clicked()), SLOT(pbReloadClicked()));
@@ -81,7 +93,7 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
 
 
     ui->leMPMin->setValidator(vi);
-    for(int i = idMinCP; i <= idMaxPet2HP; i++){
+    for(int i = idMinCP; i < CONDINUM - 1; i++){
         value = "";
         controli[i]->setValidator(vi);
         connect(controli[i], SIGNAL(textChanged(QString)), SLOT(textIChanged(QString)));
@@ -217,7 +229,7 @@ void KeySettingsDialog::itemChanged(QListWidgetItem* item){
 }
 
 void KeySettingsDialog::cbKeyEnableBxClicked(bool checked){
-    qDebug("KeySettingsDialog::cbKeyEnableBxClicked(bool checked): %d", checked);
+    //qDebug("KeySettingsDialog::cbKeyEnableBxClicked(bool checked): %d", checked);
     QCheckBox* cb = dynamic_cast<QCheckBox*>(QObject::sender());
     if( cb != NULL )
     {
@@ -247,9 +259,9 @@ void KeySettingsDialog::textIChanged(QString text)
 {
     QLineEdit* le = dynamic_cast<QLineEdit*>(QObject::sender());
     int i = idMinCP;
-    qDebug("%s",text.toStdString().c_str() );
-    while( (i <= idMaxPet2HP) && controli[i] != le){i++;}
-    if(i <= idMaxPet2HP){
+    //qDebug("%s",text.toStdString().c_str() );
+    while( (i < CONDINUM) && controli[i] != le){i++;}
+    if(i < CONDINUM){
         if(text == "") {
             condition->setConditionI( i, 0xFF);
         } else {
@@ -263,7 +275,7 @@ void KeySettingsDialog::textIChanged(QString text)
 
 
 void KeySettingsDialog::pbReloadClicked(){
-    qDebug("void KeySettingsDialog::pbReloadClicked()");
+    //qDebug("void KeySettingsDialog::pbReloadClicked()");
     currentl2w->setSkillImg(toolNumber);
     if(!currentl2w->getSkillbar()->getSkillImg(toolNumber)->isNull())    ui->tool_label->setPixmap(QPixmap::fromImage(*currentl2w->getSkillbar()->getSkillImg(toolNumber)));
 }

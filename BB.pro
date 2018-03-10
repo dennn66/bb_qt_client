@@ -5,15 +5,16 @@
 #-------------------------------------------------
 
 QT       += core gui
-QT       += multimedia
+#QT       += multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BBref11
+TARGET = BB_5_11
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc
+include($$PWD/lib/QtTelegramBot/QtTelegramBot.pri)
 
 SOURCES += main.cpp \
     boredombreaker.cpp \
@@ -42,7 +43,12 @@ SOURCES += main.cpp \
     groupmanager.cpp \
     groupcondition.cpp \
     hotkeys.cpp \
-    hotkey.cpp
+    hotkey.cpp \
+    telegrambot.cpp \
+    resurectionbox.cpp \
+    eventprocessor.cpp \
+    targetbox.cpp \
+    partybox.cpp
 
 HEADERS  += \
     boredombreaker.h \
@@ -71,7 +77,12 @@ HEADERS  += \
     groupmanager.h \
     groupcondition.h \
     hotkeys.h \
-    hotkey.h
+    hotkey.h \
+    telegrambot.h \
+    resurectionbox.h \
+    eventprocessor.h \
+    targetbox.h \
+    partybox.h
 
 FORMS    += \
     boredombreaker.ui \
@@ -82,4 +93,10 @@ LIBS += -lhid
 LIBS += -lsetupapi
 LIBS += -lgdi32
 LIBS += -luser32
+
+
+win32: LIBS += -L$$PWD/lib/winmm/ -lwinmm
+INCLUDEPATH += $$PWD/lib/winmm
+DEPENDPATH += $$PWD/lib/winmm
+win32: PRE_TARGETDEPS += $$PWD/lib/winmm/libwinmm.a
 

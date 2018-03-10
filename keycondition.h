@@ -2,6 +2,7 @@
 #define KEYCONDITION_H
 #include <QString>
 #include <QTimer>
+#include <QDebug>
 
 
 #define idCP 0
@@ -12,11 +13,18 @@
 #define idMobMP 5
 #define idPet1HP 6
 #define idPet2HP 7
+#define idPartyHP 8
+#define idParty2HP 9
+#define idParty3HP 10
+#define idParty4HP 11
+#define idParty5HP 12
+#define idParty6HP 13
+
 
 //#define idTargetType 6 //Only for message to dongle
 //#define idCheckSkillType 8 //Only for message to dongle
 
-#define BARNUM 8
+#define BARNUM 14
 
 #define idCoolDown      0
 #define idPause         1
@@ -25,27 +33,32 @@
 
 #define CONDFNUM 4
 
-#define idMinCP         0
-#define idMinHP         1
-#define idMinMP         2
-#define idMinVP         3
-#define idMinMobHP      4
-#define idMinMobMP      5
-#define idMinPet1HP     6
-#define idMinPet2HP     7
+#define idMinCP         idCP        //0
+#define idMinHP         idHP        //1
+#define idMinMP         idMP        //2
+#define idMinVP         idVP        //3
+#define idMinMobHP      idMobHP     //4
+#define idMinMobMP      idMobMP     //5
+#define idMinPet1HP     idPet1HP    //6
+#define idMinPet2HP     idPet2HP    //7
+#define idMinMemberHP   idPartyHP   //8
+
+#define CONDIGROUPS     idPartyHP+1 //9
 
 
-#define idMaxCP         8
-#define idMaxHP         9
-#define idMaxMP         10
-#define idMaxVP         11
-#define idMaxMobHP      12
-#define idMaxMobMP      13
-#define idMaxPet1HP     14
-#define idMaxPet2HP     15
-#define idPauseSkillNum 16
+#define idMaxCP         CONDIGROUPS + idCP      //9
+#define idMaxHP         CONDIGROUPS + idHP      //10
+#define idMaxMP         CONDIGROUPS + idMP      //11
+#define idMaxVP         CONDIGROUPS + idVP      //12
+#define idMaxMobHP      CONDIGROUPS + idMobHP   //13
+#define idMaxMobMP      CONDIGROUPS + idMobMP   //14
+#define idMaxPet1HP     CONDIGROUPS + idPet1HP  //15
+#define idMaxPet2HP     CONDIGROUPS + idPet2HP  //16
+#define idMaxMemberHP   CONDIGROUPS + idPartyHP //17
 
-#define CONDINUM 17
+#define idPauseSkillNum idMaxMemberHP+1         //18
+
+#define CONDINUM idPauseSkillNum + 1            //19
 
 #define idGroupB1               0
 #define idGroupB2               1
@@ -62,14 +75,17 @@
 
 #define idCheckSkillTimeout     10
 
-#define idCheckPet              11
-#define idPetState              12
+#define idCheckRange            11
+#define idInRange               12
 
-#define idCtrl                  13
-#define idShift                 14
+#define idCheckPet              13
+#define idPetState              14
+
+#define idCtrl                  15
+#define idShift                 16
 
 #define TokensNum               4
-#define idCheckToken           15
+#define idCheckToken           17
 #define idTokenCondition       idCheckToken+TokensNum
 
 #define CONDBNUM idTokenCondition+TokensNum
@@ -97,29 +113,73 @@ public:
     unsigned char getGroupsBinaryCondition();
     unsigned char getTargetTypeBinaryCondition();
 
+#define OR_MODE  true
+#define AND_MODE false
+
     bool checkTokenCondition(int state){
-        bool condition = true;
+        qDebug() << "bool checkTokenCondition(int state = " << state << ")";
+        bool mode = OR_MODE;
+        bool is_condition_on = false;
+
         for(int i = 0; i < TokensNum; i++){
+            qDebug() << "check token " << i;
             if(conditionb[idCheckToken+i]){
-                if(conditionb[idTokenCondition+i] == (state == i)) return true;
-                condition = false;
+                 qDebug() << "have condition on token " << i;
+                is_condition_on = true;
+                if(conditionb[idTokenCondition+i] == false) mode = AND_MODE;
+                qDebug() << "if(conditionb[idTokenCondition+i] == false) mode =  " << mode;
             }
         }
-        return condition;
+
+        qDebug() << "is_condition_on =  " << is_condition_on;
+        if(!is_condition_on) return true;
+
+        if(mode == OR_MODE) {
+             qDebug() << "OR_MODE";
+            for(int i = 0; i < TokensNum; i++){
+                if(conditionb[idCheckToken+i]){
+                    qDebug() << "check token " << i;
+                    if(conditionb[idTokenCondition+i] == (state == i)) {
+                        qDebug() << "return true ";
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else { //AND_MODE
+            qDebug() << "AND_MODE";
+            for(int i = 0; i < TokensNum; i++){
+                if(conditionb[idCheckToken+i]){
+                    qDebug() << "check token " << i;
+                    if (!conditionb[idTokenCondition+i] == (state == i)) {
+                        qDebug() << "return false ";
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
     }
 
     bool checkTargetCondition(unsigned char target){ return conditionb[idTargetMeOrPet+target];}
 
-    bool checkBarCondition(int num, unsigned char bar){
+    bool checkBarCondition(int bar_num, unsigned char bar_value, bool result_if_unknown = true){
 
-        if(num <  BARNUM && bar <= 100 )
+        if(bar_num <  CONDIGROUPS && bar_value <= 100 )
         {
-            if(conditioni[num] <= 100 && bar <  conditioni[num]) return false;
-            if(conditioni[BARNUM+num] <= 100 && bar >  conditioni[BARNUM+num]) return false;
+            if(conditioni[bar_num] <= 100 && bar_value <  conditioni[bar_num]) return false;
+            if(conditioni[CONDIGROUPS+bar_num] <= 100 && bar_value >  conditioni[CONDIGROUPS+bar_num]) return false;
+        } else {
+            return result_if_unknown;
         }
         return true;
     }
 
+    bool isBarConditionEnabled(int bar_num){
+        if(bar_num <  CONDIGROUPS  && (conditioni[bar_num] < 100 || conditioni[CONDIGROUPS+bar_num] < 100)) return true;
+        return false;
+    }
     void setConditionB(int index, bool b){if(index >= 0 && index < CONDBNUM) conditionb[index] = b;}
     bool getConditionB(int index){ if(index >= 0 && index < CONDBNUM) return conditionb[index];  return false; }
 

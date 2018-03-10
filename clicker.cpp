@@ -97,25 +97,9 @@ void Clicker::updateGroupState(int num,  bool state){
     }
 }
 
-void Clicker::set_visual_skill_state(int num, bool state, bool enable, bool groupstate){
-    if(enable){
-        if(groupstate){
-            if(state) {
-                //keylabel[num]->setStyleSheet(StyleSheetLabel[3]); // GREEN
-
-            } else {
-                //keylabel[num]->setStyleSheet(StyleSheetLabel[1]); // RED
-            }
-        } else {
-            //keylabel[num]->setStyleSheet(StyleSheetLabel[5]); // WHITE
-        }
-    } else {
-       //keylabel[num]->setStyleSheet(StyleSheetLabel[4]); // GRAY
-    }
-}
 
 void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk){
-    qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
+    //qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
     static int ellipsed_time=0;
 
     this->setVisible(this->underMouse() || l2w->isActiveWindow || (((HWND)(this->winId())) == ::GetForegroundWindow()));
@@ -169,7 +153,7 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk)
 
 // Broadcasts a key has been pressed
 void Clicker::keyLPressed(int x, int y){
-    qDebug("Clicker::keyLPressed()");
+    //qDebug("Clicker::keyLPressed()");
 
     if(isUnderWidget(ui->lbOnOff, x, y)) {
         emit set_operation_state(!ui->cbDongle->isChecked());
@@ -208,9 +192,9 @@ bool Clicker::isUnderWidget(QWidget* widget, int abs_x, int abs_y){
     int x=abs_x - wdg.x();
     int y=abs_y - wdg.y();
     wdg = ui->fr_controls->pos();
-    qDebug("Clicker::keyLPressed() cb %d %d %d %d", cb.x(), cb.y(), cb.width(), cb.height());
-    qDebug("Clicker::keyLPressed() wdg %d %d", wdg.x(), wdg.y());
-    qDebug("Clicker::keyLPressed() clc %d %d", x, y);
+    //qDebug("Clicker::keyLPressed() cb %d %d %d %d", cb.x(), cb.y(), cb.width(), cb.height());
+    //qDebug("Clicker::keyLPressed() wdg %d %d", wdg.x(), wdg.y());
+    //qDebug("Clicker::keyLPressed() clc %d %d", x, y);
 
     return (
                 x > (wdg.x() + cb.x()) &&
@@ -223,7 +207,7 @@ bool Clicker::isUnderWidget(QWidget* widget, int abs_x, int abs_y){
 
 // Broadcasts a key has been released
 void Clicker::keyLReleased(int x, int y){
-    qDebug("Clicker::keyLReleased()");
+    //qDebug("Clicker::keyLReleased()");
 
     if(isUnderWidget(ui->lbStatus, x, y) && bFindBarsIsPressed) {
            // Reset window
@@ -293,6 +277,6 @@ void Clicker::showDongleStatus(unsigned char d_stt,  int updatetime)
 
 Clicker::~Clicker()
 {
-    qDebug("Clicker::~Clicker()");
+    //qDebug("Clicker::~Clicker()");
     delete ui;
 }

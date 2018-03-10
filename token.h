@@ -1,17 +1,19 @@
 #ifndef TOKEN_H
 #define TOKEN_H
+#include <QDebug>
 #include "l2graphicsobject.h"
+
 
 #define TOKEN_1 0
 #define TOKEN_2 1
-#define TOKEN_3 0
-#define TOKEN_4 0
+#define TOKEN_3 2
+#define TOKEN_4 3
 #define TOKEN_NONE 5
 
 #define STAR_COLOR qRgb(183, 150, 5)
 #define HEART_COLOR qRgb(220, 70, 18)
 #define MOON_COLOR qRgb(28, 133, 222)
-#define CROSS_COLOR qRgb(72, 32, 72)
+#define CROSS_COLOR qRgb(60, 21, 62)
 
 class Token : public L2GraphicObject
 {
@@ -23,23 +25,23 @@ public:
         if((startopleft.rx()<0 && getTimer()) ){
 
             startopleft = findPattern(image, topleft, rightbottom, star, 5);
-            qDebug("startopleft %d %d", startopleft.rx(), startopleft.ry());
+            //qDebug("startopleft %d %d", startopleft.rx(), startopleft.ry());
         }
     }
     */
 
     void findToken(QPoint topleft){
         if(topleft.x() > 0 && topleft.y() > 0) startopleft = topleft;
-            qDebug("startopleft %d %d", startopleft.rx(), startopleft.ry());
+            //qDebug("startopleft %d %d", startopleft.rx(), startopleft.ry());
     }
 
     QColor* getTokenColor(){
-    //   qDebug("L2Window::getStarColor");
+        //qDebug("L2Window::getStarColor");
         return &token_color;
     }
 
     int getTokenState(){
-    //   qDebug("L2Window::getStarState");
+        //qDebug("L2Window::getStarState");
         return nToken;
     }
     void reset(){
@@ -47,7 +49,7 @@ public:
 
     }
     void checkToken(QImage* image) {
-
+        qDebug() <<  "void checkToken(QImage* image)";
         if(startopleft.rx() > 0 ){
             QImage icotmp2=image->copy(startopleft.rx()+3, startopleft.ry()+4, 6, 6);
             for(int j=0;j<6;j++) {
@@ -60,6 +62,7 @@ public:
                      token_color.setBlue((token_color.blue()+c1.blue())/2);
                 }
             }
+            qDebug() << "Token color: " << token_color.red() << " " << token_color.green() << " " << token_color.blue();
             if(CompareColors(token_color.rgb(),STAR_COLOR, 5)) {nToken = TOKEN_1;}
             else if(CompareColors(token_color.rgb(),HEART_COLOR, 5)) {nToken = TOKEN_2;}
             else if(CompareColors(token_color.rgb(),MOON_COLOR, 5)) {nToken = TOKEN_3;}
@@ -70,6 +73,7 @@ public:
             token_color.setRgb(qRgb(128, 128, 128));
             nToken = TOKEN_NONE;
         }
+         qDebug() << "Token number: " << nToken;
 
     }
 

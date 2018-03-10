@@ -6,5 +6,6 @@ Mainbox::Mainbox( Barbox *parent) : Barbox( parent)
     appendbar(idHP,HP_COLOR, BK_HP_COLOR);
     appendbar(idMP,MP_COLOR, BK_MP_COLOR);
     appendbar(idVP,VP_COLOR, BK_VP_COLOR);
+    caption = "Main Box";
     initBars();
 }

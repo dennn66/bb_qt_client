@@ -19,7 +19,7 @@ XPBar::XPBar(L2GraphicObject *parent) : L2GraphicObject(parent)
 
 XPBar::~XPBar()
 {
-    qDebug("XPBar::~XPBar");
+    //qDebug("XPBar::~XPBar");
 
 }
 
@@ -241,7 +241,8 @@ int XPBar::checkXPBarPartial(QImage* image, int begin, int end){
 bool XPBar::getStatus(){return status;}
 
 int XPBar::getXP(){return (status == BAR_ON)? XP : XP_ERR;}
-QRect XPBar::getRect(){return (status == BAR_ON)? QRect(xBegin,yXP-1,xEnd-xBegin,3) : QRect(0,0,0,0);}
+//QRect XPBar::getRect(){return (status == BAR_ON)? QRect(xBegin,yXP-1,xEnd-xBegin,3) : QRect(0,0,0,0);}
+QRect XPBar::getRect(){return QRect(xBegin,yXP-1,xEnd-xBegin,3);}
 
 void XPBar::setColors(QRgb color, QRgb bk_color){
     barcolor = color;

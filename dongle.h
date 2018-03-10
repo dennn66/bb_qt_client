@@ -71,6 +71,13 @@
 #define DEVICE_MASK      0b11111111
 
 
+#define USB_MOUSE_BTN_MASK      0x1F
+#define USB_MOUSE_BTN_LEFT      0
+#define USB_MOUSE_BTN_RIGHT     1
+#define USB_MOUSE_BTN_MIDDLE    2
+#define USB_MOUSE_BTN_4th       3
+#define USB_MOUSE_BTN_5th       4
+
 class Dongle : public QObject
 {
     Q_OBJECT
@@ -80,7 +87,7 @@ public:
 
     void sendKeyToDongle(int condition_index);
     void setDeviceState(unsigned char state){
-        qDebug("Dongle::setDeviceState(unsigned int state): %d", state);
+        //qDebug("Dongle::setDeviceState(unsigned int state): %d", state);
         target_device_state = state;
         activity = DO_SETDEVICESTATE;
     }
@@ -125,8 +132,11 @@ public slots:
     void set_shift(bool bShift);
     void toggle_shift();
     void set_ctrl(bool bCtrl);
+    void toggle_ctrl();
     void set_mode(bool bMode);
     void jump_to_bootloader();
+    int set_mouse_report(qint8 x, qint8 y, bool left, bool right, bool middle);
+
 
 signals:
     void finished();

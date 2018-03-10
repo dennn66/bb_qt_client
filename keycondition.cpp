@@ -23,6 +23,7 @@ const char* KeyCondition::conditioni_tag[CONDINUM] = {
     "$FMobMPMinSet",
     "$FPetHP1MinSet",
     "$FPetHP2MinSet",
+    "$FMemberHPMinSet",
 
     "$FCPMaxSet",
     "$FHPMaxSet",
@@ -32,6 +33,7 @@ const char* KeyCondition::conditioni_tag[CONDINUM] = {
     "$FMobMPMaxSet",
     "$FPetHP1MaxSet",
     "$FPetHP2MaxSet",
+    "$FMemberHPMaxSet",
 
     "$FPauseSkillNum"
 
@@ -54,8 +56,12 @@ const char* KeyCondition::conditionb_tag[CONDBNUM] = {
 
     "$FCheckSkill",
 
+    "$FCheckRange",
+    "$FInRange",
+
     "$FCheckPet",
     "$FPetState",
+
     "$FCtrl",
     "$FShift",
 
@@ -67,69 +73,7 @@ const char* KeyCondition::conditionb_tag[CONDBNUM] = {
     "$FStarState",
     "$FStateToken2",
     "$FStateToken3",
-    "$FStateToken4" //,
-
-/*
-    "$FNotUseSkill1",
-    "$FNotUseSkill2",
-    "$FNotUseSkill3",
-    "$FNotUseSkill4",
-
-    "$FNotUseSkill5",
-    "$FNotUseSkill6",
-    "$FNotUseSkill7",
-    "$FNotUseSkill8",
-
-    "$FNotUseSkill9",
-    "$FNotUseSkill10",
-    "$FNotUseSkill11",
-    "$FNotUseSkill12",
-
-    "$FNotUseSkill13",
-    "$FNotUseSkill14",
-    "$FNotUseSkill15",
-    "$FNotUseSkill16",
-
-    "$FNotUseSkill17",
-    "$FNotUseSkill18",
-    "$FNotUseSkill19",
-    "$FNotUseSkill20",
-
-    "$FNotUseSkill21",
-    "$FNotUseSkill22",
-    "$FNotUseSkill23",
-    "$FNotUseSkill24",
-
-    "$FNotUseSkill25",
-    "$FNotUseSkill26",
-    "$FNotUseSkill27",
-    "$FNotUseSkill28",
-
-    "$FNotUseSkill29",
-    "$FNotUseSkill30",
-    "$FNotUseSkill31",
-    "$FNotUseSkill32",
-
-    "$FNotUseSkill33",
-    "$FNotUseSkill34",
-    "$FNotUseSkill35",
-    "$FNotUseSkill36",
-
-    "$FNotUseSkill37",
-    "$FNotUseSkill38",
-    "$FNotUseSkill39",
-    "$FNotUseSkill40",
-
-    "$FNotUseSkill41",
-    "$FNotUseSkill42",
-    "$FNotUseSkill43",
-    "$FNotUseSkill44",
-
-    "$FNotUseSkill45",
-    "$FNotUseSkill46",
-    "$FNotUseSkill47",
-    "$FNotUseSkill48"
-*/
+    "$FStateToken4"
 };
 
 const char* KeyCondition::conditionb_name[CONDBNUM] = {
@@ -144,6 +88,10 @@ const char* KeyCondition::conditionb_name[CONDBNUM] = {
     "Mob",
     "No Target",
     "Check Skill",
+
+    "Check Range",
+    "In Range",
+
     "Check Pet",
     "Pet State",
 
@@ -158,68 +106,7 @@ const char* KeyCondition::conditionb_name[CONDBNUM] = {
     "State",
     "State",
     "State",
-    "State" //,
-/*
-    "$FNotUseSkill1",
-    "$FNotUseSkill2",
-    "$FNotUseSkill3",
-    "$FNotUseSkill4",
-
-    "$FNotUseSkill5",
-    "$FNotUseSkill6",
-    "$FNotUseSkill7",
-    "$FNotUseSkill8",
-
-    "$FNotUseSkill9",
-    "$FNotUseSkill10",
-    "$FNotUseSkill11",
-    "$FNotUseSkill12",
-
-    "$FNotUseSkill13",
-    "$FNotUseSkill14",
-    "$FNotUseSkill15",
-    "$FNotUseSkill16",
-
-    "$FNotUseSkill17",
-    "$FNotUseSkill18",
-    "$FNotUseSkill19",
-    "$FNotUseSkill20",
-
-    "$FNotUseSkill21",
-    "$FNotUseSkill22",
-    "$FNotUseSkill23",
-    "$FNotUseSkill24",
-
-    "$FNotUseSkill25",
-    "$FNotUseSkill26",
-    "$FNotUseSkill27",
-    "$FNotUseSkill28",
-
-    "$FNotUseSkill29",
-    "$FNotUseSkill30",
-    "$FNotUseSkill31",
-    "$FNotUseSkill32",
-
-    "$FNotUseSkill33",
-    "$FNotUseSkill34",
-    "$FNotUseSkill35",
-    "$FNotUseSkill36",
-
-    "$FNotUseSkill37",
-    "$FNotUseSkill38",
-    "$FNotUseSkill39",
-    "$FNotUseSkill40",
-
-    "$FNotUseSkill41",
-    "$FNotUseSkill42",
-    "$FNotUseSkill43",
-    "$FNotUseSkill44",
-
-    "$FNotUseSkill45",
-    "$FNotUseSkill46",
-    "$FNotUseSkill47",
-    "$FNotUseSkill48"
-*/
+    "State"
 };
 
 KeyCondition::KeyCondition(QString button)
@@ -244,7 +131,7 @@ KeyCondition::KeyCondition(QString button)
 }
 
 void KeyCondition::setGroupState(int group_number, bool state){
-    qDebug("KeyConditionsSet::setGroupState(int group, bool state)");
+    //qDebug("KeyConditionsSet::setGroupState(int group, bool state)");
     conditionb[group_number+idGroupB1] = state;
 }
 
@@ -254,7 +141,7 @@ bool KeyCondition::getGroupState(int group_number){
 
 
 unsigned char KeyCondition::getTargetTypeBinaryCondition(){
-    qDebug("KeyCondition::getTargetTypeBinaryState()");
+    //qDebug("KeyCondition::getTargetTypeBinaryState()");
     unsigned char state = 0;
 
     for(int i = idTargetMeOrPet; i < idNoTarget+1; i++){
@@ -266,7 +153,7 @@ unsigned char KeyCondition::getTargetTypeBinaryCondition(){
 
 
 unsigned char KeyCondition::getGroupsBinaryCondition(){
-    qDebug("KeyCondition::getGroupsBinaryCondition()");
+    //qDebug("KeyCondition::getGroupsBinaryCondition()");
     unsigned char state = 0;
     for(int i = idGroupB1; i<idGroupB4+1; i++){
         state |= conditionb[i] << (i);
@@ -277,7 +164,7 @@ unsigned char KeyCondition::getGroupsBinaryCondition(){
 
 KeyCondition::~KeyCondition()
 {
-    qDebug("KeyCondition::~KeyCondition()");
+    //qDebug("KeyCondition::~KeyCondition()");
 
 }
 

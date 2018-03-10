@@ -15,7 +15,7 @@ public:
 
     int initbar(int id,  int yposition){
 //        int index = Barbox::initbar(id, 20, -11, 28, 8, yposition);
-        int index = Barbox::initbar(id, 19, -12, 31, 50, yposition);
+        int index = Barbox::initbar(id, 19, 12, 31, 50, yposition);
         if(index >= 0){
             barlist[index]->patternMethod = true;
             barlist[index]->barpattern = mobhp;

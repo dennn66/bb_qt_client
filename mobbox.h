@@ -22,7 +22,7 @@ public:
     }
 
     int initbar(int id,  int yposition){
-        int index = Barbox::initbar(id, 21, -12, 28, 8, yposition);
+        int index = Barbox::initbar(id, 20, 10, 28, 8, yposition);
         if(index >= 0){
             barlist[index]->patternMethod = true;
             if(id == idMobHP) {
@@ -37,7 +37,7 @@ public:
     void findToken(){
 
 //        if(state()) token.findToken(image, QPoint(topleft.x()+20, topleft.y()+6), QPoint(topleft.x()+24, topleft.y()+10));
-        if(state()){
+        if(getState()){
 
             token.findToken(QPoint(topleft.x()+22, topleft.y()+8));
 
@@ -85,12 +85,12 @@ public:
     int  getTargetType(){return targettype;}
 
     QColor* getTokenColor(){
-    //   qDebug("L2Window::getStarColor");
+        //qDebug("L2Window::getStarColor");
         return token.getTokenColor();
     }
 
     int getTokenState(){
-    //   qDebug("L2Window::getStarState");
+        //qDebug("L2Window::getStarState");
         return token.getTokenState();
     }
     void checkToken(QImage* image) {

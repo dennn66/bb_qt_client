@@ -57,7 +57,7 @@ void HotKeys::process(){
 
 void HotKeys::keyGlobalPressed(DWORD vkCode)
 {
-    qDebug("vkCode BoredomBreaker::keyGlobalPressed(DWORD vkCode=%d)", (int) vkCode);
+    //qDebug("vkCode BoredomBreaker::keyGlobalPressed(DWORD vkCode=%d)", (int) vkCode);
     for(int i = 0; i<  hklist.size(); i++){
         hklist[i]->checkPressedModifier(vkCode);
     }
@@ -65,13 +65,13 @@ void HotKeys::keyGlobalPressed(DWORD vkCode)
 
 void HotKeys::keyGlobalReleased(DWORD vkCode)
 {
-    qDebug("vkCode BoredomBreaker::keyGlobalReleased(DWORD vkCode=%d)", (int) vkCode);
+    //qDebug("vkCode BoredomBreaker::keyGlobalReleased(DWORD vkCode=%d)", (int) vkCode);
 
     bool bIsItModifier = false;
     for(int i = 0; i< hklist.size(); i++){
         bIsItModifier = bIsItModifier || hklist[i]->checkReleasedModifier(vkCode);
     }
-    qDebug("vkCode bGlobalModifier = %d", bIsItModifier);
+    //qDebug("vkCode bGlobalModifier = %d", bIsItModifier);
     if(bIsItModifier) return;
 
 
@@ -86,45 +86,45 @@ void HotKeys::keyGlobalReleased(DWORD vkCode)
             if(b_control == B_SHIFT){
                 switch(k_action){
                     case K_DISABLE:
-                        qDebug("vkCode K_DISABLE");
+                        //qDebug("vkCode K_DISABLE");
                         emit set_shift(false);
                         break;
                     case K_ENABLE:
-                        qDebug("vkCode K_ENABLE");
+                        //qDebug("vkCode K_ENABLE");
                         emit set_shift(true);
                         break;
                     case K_TOGGLE:
-                        qDebug("vkCode K_TOGGLE");
+                        //qDebug("vkCode K_TOGGLE");
                         emit toggle_shift();
                         break;
                 }
             } else if(b_control == B_ONOFF){
                 switch(k_action){
                     case K_DISABLE:
-                        qDebug("vkCode K_DISABLE");
+                        //qDebug("vkCode K_DISABLE");
                         emit set_operation_state(false);
                         break;
                     case K_ENABLE:
-                        qDebug("vkCode K_ENABLE");
+                        //qDebug("vkCode K_ENABLE");
                         emit set_operation_state(true);
                         break;
                     case K_TOGGLE:
-                        qDebug("vkCode K_TOGGLE");
+                        //qDebug("vkCode K_TOGGLE");
                         emit toggle_operation_state();
                         break;
                 }
             } else {
                 switch(k_action){
                     case K_DISABLE:
-                         qDebug("vkCode K_DISABLE");
+                         //qDebug("vkCode K_DISABLE");
                          emit setGroupState(b_control-1,false);
                          break;
                     case K_ENABLE:
-                         qDebug("vkCode K_ENABLE");
+                         //qDebug("vkCode K_ENABLE");
                          emit setGroupState(b_control-1,true);
                          break;
                     case K_TOGGLE:
-                         qDebug("vkCode K_TOGGLE");
+                         //qDebug("vkCode K_TOGGLE");
                          emit toggleGroupState(b_control-1);
                          break;
                 }

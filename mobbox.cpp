@@ -7,6 +7,8 @@ Mobbox::Mobbox( Barbox *parent) : Barbox( parent)
 
     appendbar(idMobHP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idMobMP,MobMP_COLOR, BK_MobMP_COLOR);
+    caption = "Mob Box";
+
     initBars();
 }
 
