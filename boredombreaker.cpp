@@ -92,7 +92,7 @@ BoredomBreaker::BoredomBreaker(QWidget *parent) :
     }
 
 
-    dongle = new Dongle();
+    dongle = new BadUSB::Dongle();
     QThread* dongle_thread = new QThread;
     dongle->moveToThread(dongle_thread);
 

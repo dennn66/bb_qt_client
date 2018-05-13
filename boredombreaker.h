@@ -54,7 +54,7 @@ private:
     QCheckBox *keyenable2[GROUPSNUM];
 //    QPushButton *keysettings[KEYNUM];
 
-    Dongle* dongle;
+    BadUSB::Dongle* dongle;
     Clicker* clicker;
     L2parser* l2_parser;
     TelegramBot* tele_bot;

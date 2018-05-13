@@ -15,11 +15,12 @@ TEMPLATE = app
 
 win32:RC_FILE = bb.rc
 include($$PWD/lib/QtTelegramBot/QtTelegramBot.pri)
+include($$PWD/lib/BadUSB/BadUSB.pri)
 
 SOURCES += main.cpp \
     boredombreaker.cpp \
-    hid.c \
-    dongle.cpp \
+    #hid.c \
+    #dongle.cpp \
     l2window.cpp \
     xpbar.cpp \
     keycondition.cpp \
@@ -39,7 +40,7 @@ SOURCES += main.cpp \
     skill.cpp \
     skillstate.cpp \
     petbox.cpp \
-    donglekey.cpp \
+    #donglekey.cpp \
     groupmanager.cpp \
     groupcondition.cpp \
     hotkeys.cpp \
@@ -52,8 +53,8 @@ SOURCES += main.cpp \
 
 HEADERS  += \
     boredombreaker.h \
-    hidapi.h \
-    dongle.h \
+    #hidapi.h \
+    #dongle.h \
     l2window.h \
     xpbar.h \
     keycondition.h \
@@ -73,7 +74,7 @@ HEADERS  += \
     skill.h \
     skillstate.h \
     petbox.h \
-    donglekey.h \
+    #donglekey.h \
     groupmanager.h \
     groupcondition.h \
     hotkeys.h \
