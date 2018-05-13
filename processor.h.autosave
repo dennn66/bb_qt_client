@@ -1,0 +1,37 @@
+#ifndef PROCESSOR_H
+#define PROCESSOR_H
+
+#include <QObject>
+
+class Processor : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Processor(QObject *parent = 0);
+private:
+    bool group_state[GROUPSNUM];
+    bool skill_state[KEYNUM];
+    
+signals:
+    void set_skill_state(int num, bool state);
+
+public slots:
+    void set_l2_skill_state(int num, bool state){
+        skill_state[num] = state;
+        emit set_skill_state(num, checkRule(num));
+    }
+    void setGroupState(int num,  bool state){
+        group_state[num] = state;
+    }
+    
+    bool checkRule(int num){
+        bool groupstatement = false;
+        for(int i = 0; i < 4 ; i++){
+            groupstatement = groupstatement || (cond->getGroupState(i) && getGroupState(i));
+        }
+        if(!groupstatement) return false;
+    }
+    
+};
+
+#endif // PROCESSOR_H

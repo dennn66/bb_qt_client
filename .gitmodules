@@ -1,3 +1,3 @@
-[submodule "lib/QtTelegramBot"]
-	path = lib/QtTelegramBot
-	url = https://github.com/dennn66/QtTelegramBot
+[submodule "lib/BadUSB"]
+	path = lib/BadUSB
+	url = https://github.com/dennn66/BadUSB
