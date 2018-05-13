@@ -44,6 +44,7 @@ void Box::drawStatus(QImage* imgStatus, QRect r){
         painter->setBrush(QBrush(QColor("#88FF0000"), Qt::SolidPattern));
     }
     painter->drawRect(QRect(r.x(),r.y(),r.width()/2,r.height()));
+
     if(getRightStatus()){
         painter->setPen(QPen(QColor("#8800FF00")));
         painter->setBrush(QBrush(QColor("#8800FF00"), Qt::SolidPattern));
@@ -71,7 +72,7 @@ void Box::drawOverlayedStatus(QPainter* p, QPen* skillpen){
     } else {
         skillpen->setColor(QColor("#8800FF00"));
         p->setPen(*skillpen);
-        p->drawRect(getLeftMargin());
+        //p->drawRect(getLeftMargin());
 
         if(!getRightStatus())
         {
@@ -84,7 +85,7 @@ void Box::drawOverlayedStatus(QPainter* p, QPen* skillpen){
         } else {
             skillpen->setColor(QColor("#3300FF00"));
             p->setPen(*skillpen);
-            p->drawRect(getRightMargin());
+            //p->drawRect(getRightMargin());
         }
     }
 }

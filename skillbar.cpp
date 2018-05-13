@@ -51,8 +51,8 @@ void Skillbar::drawStatus(QImage* imgStatus, QRect r){
     p.begin(imgStatus);
 
     if(getLeftStatus()){
-        p.setPen(QPen(QColor("#88442244")));
-        p.setBrush(QBrush(QColor("#88442244"), Qt::SolidPattern));
+        p.setPen(QPen(QColor("#88448844")));
+        p.setBrush(QBrush(QColor("#88448844"), Qt::SolidPattern));
     } else {
         p.setPen(QPen(QColor("#88FF0000")));
         p.setBrush(QBrush(QColor("#88FF0000"), Qt::SolidPattern));
