@@ -1,6 +1,6 @@
 
 #include "xpbar.h"
-
+using namespace L2;
 XPBar::XPBar(L2GraphicObject *parent) : L2GraphicObject(parent)
 {
     status = BAR_OFF;

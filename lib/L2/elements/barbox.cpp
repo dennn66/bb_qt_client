@@ -1,5 +1,5 @@
 #include "barbox.h"
-
+using namespace L2;
 Barbox::Barbox(Box *parent) : Box( parent)
 {
 

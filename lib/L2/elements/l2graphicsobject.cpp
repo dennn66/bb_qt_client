@@ -1,5 +1,5 @@
 #include "l2graphicsobject.h"
-
+using namespace L2;
 L2GraphicObject::L2GraphicObject(QObject *parent) : QObject(parent)
 {
     detectmax = 0;

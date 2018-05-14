@@ -1,5 +1,5 @@
 #include "skillbar.h"
-
+using namespace L2;
 Skillbar::Skillbar(Box *parent) : Box(parent)
 {
     caption = "Skill Box";

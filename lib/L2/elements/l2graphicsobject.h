@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QtWinExtras/QtWin>
 
+namespace L2 {
 class L2GraphicObject  : public QObject
 {
 public:
@@ -25,5 +26,5 @@ protected:
     int detectmax;
     int detectcounter;
 };
-
+}
 #endif // L2GRAPHICSOBJECT_H

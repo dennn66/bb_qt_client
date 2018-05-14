@@ -102,7 +102,7 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk)
     //qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
     static int ellipsed_time=0;
 
-    this->setVisible(this->underMouse() || l2w->isActiveWindow || (((HWND)(this->winId())) == ::GetForegroundWindow()));
+    this->setVisible(this->underMouse() || l2w->isActiveWindow() || (((HWND)(this->winId())) == ::GetForegroundWindow()));
 
     if(!isVisible()) return;
 

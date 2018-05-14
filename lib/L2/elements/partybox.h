@@ -1,7 +1,7 @@
 #ifndef PARTYBOX_H
 #define PARTYBOX_H
-#include "barbox.h"
-
+#include "elements/barbox.h"
+namespace L2 {
 class Partybox : public Barbox
 {
 public:
@@ -53,5 +53,5 @@ protected:
     QImage memberhp;
 
 };
-
+}
 #endif // PARTYBOX_H

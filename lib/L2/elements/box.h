@@ -2,10 +2,10 @@
 #define BOX_H
 
 #include <QtGui>
-#include "l2graphicsobject.h"
+#include "elements/l2graphicsobject.h"
 
 
-
+namespace L2 {
 class Box  : public L2GraphicObject
 {
 public:
@@ -63,5 +63,5 @@ protected:
 private:
 
 };
-
+}
 #endif // BOX_H

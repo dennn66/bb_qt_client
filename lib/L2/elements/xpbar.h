@@ -7,7 +7,7 @@
 #include <QFile>
 #include <QDir>
 #include <QSettings>
-#include "l2graphicsobject.h"
+#include "elements/l2graphicsobject.h"
 
 
 #define BAR_OFF false
@@ -31,7 +31,7 @@
 #define VP_COLOR qRgb(65, 90, 24)
 #define BK_VP_COLOR qRgb(32, 37, 25)
 
-
+namespace L2 {
 class XPBar  : public L2GraphicObject
 {
 public:
@@ -73,5 +73,5 @@ signals:
 
 public slots:
 };
-
+}
 #endif // XPBAR_H

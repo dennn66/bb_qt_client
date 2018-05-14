@@ -1,7 +1,7 @@
 #ifndef MOBBOX_H
 #define MOBBOX_H
-#include "barbox.h"
-#include "token.h"
+#include "elements/barbox.h"
+#include "elements/token.h"
 //#include "mobbar.h"
 
 #define TARGETMEORPET   0
@@ -9,7 +9,7 @@
 #define TARGETMOB       2
 #define NOTARGET        3
 #define TARGETSTATESNUM 4
-
+namespace L2 {
 class Mobbox : public Barbox
 {
 public:
@@ -108,5 +108,5 @@ protected:
     QImage mobhp;
     QImage mobmp;
 };
-
+}
 #endif // MOBBOX_H

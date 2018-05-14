@@ -1,7 +1,7 @@
 #ifndef TARGETBOX_H
 #define TARGETBOX_H
-#include "box.h"
-
+#include "elements/box.h"
+namespace L2 {
 class TargetBox : public Box
 {
 public:
@@ -19,5 +19,5 @@ private:
     int range_top;
 
 };
-
+}
 #endif // TARGETBOX_H

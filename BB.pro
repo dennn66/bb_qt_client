@@ -10,19 +10,20 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BB_5_11
+TARGET = BB_5_12
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc
 include($$PWD/lib/QtTelegramBot/QtTelegramBot.pri)
 include($$PWD/lib/BadUSB/BadUSB.pri)
+include($$PWD/lib/L2/L2.pri)
 
 SOURCES += main.cpp \
     boredombreaker.cpp \
     #hid.c \
     #dongle.cpp \
     l2window.cpp \
-    xpbar.cpp \
+    #xpbar.cpp \
     keycondition.cpp \
     keysettingsdialog.cpp \
     keyconditionsset.cpp \
@@ -30,26 +31,26 @@ SOURCES += main.cpp \
     l2parser.cpp \
     clicker.cpp \
     systemmousehook.cpp \
-    skillbar.cpp \
-    barbox.cpp \
-    l2graphicsobject.cpp \
-    box.cpp \
-    token.cpp \
-    mainbox.cpp \
-    mobbox.cpp \
-    skill.cpp \
-    skillstate.cpp \
-    petbox.cpp \
+    #skillbar.cpp \
+    #barbox.cpp \
+    #l2graphicsobject.cpp \
+    #box.cpp \
+    #token.cpp \
+    #mainbox.cpp \
+    #mobbox.cpp \
+    #skill.cpp \
+    #skillstate.cpp \
+    #petbox.cpp \
     #donglekey.cpp \
     groupmanager.cpp \
     groupcondition.cpp \
     hotkeys.cpp \
     hotkey.cpp \
     telegrambot.cpp \
-    resurectionbox.cpp \
+    #resurectionbox.cpp \
     eventprocessor.cpp \
-    targetbox.cpp \
-    partybox.cpp
+    #targetbox.cpp \
+    #partybox.cpp
 
 HEADERS  += \
     boredombreaker.h \

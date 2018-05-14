@@ -1,5 +1,5 @@
 #include "skillstate.h"
-
+using namespace L2;
 SkillState::SkillState(int id)
 {
     stateid = id;

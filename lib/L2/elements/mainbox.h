@@ -1,8 +1,8 @@
 #ifndef MAINBOX_H
 #define MAINBOX_H
-#include "barbox.h"
+#include "elements/barbox.h"
 //#include "mainbar.h"
-
+namespace L2 {
 class Mainbox  : public Barbox
 {
 public:
@@ -25,5 +25,5 @@ protected:
 
 
 };
-
+}
 #endif // MAINBOX_H

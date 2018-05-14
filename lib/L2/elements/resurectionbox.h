@@ -1,6 +1,6 @@
 #ifndef RESURECTIONBOX_H
 #define RESURECTIONBOX_H
-#include "box.h"
+#include "elements/box.h"
 
 #define OK_LEFT_OFFSET 52
 #define OK_TOP_OFFSET 91
@@ -12,7 +12,7 @@
 #define USB_MOUSE_DIV 5
 
 
-
+namespace L2 {
 class ResurrectionBox : public Box
 {
 public:
@@ -72,5 +72,5 @@ private:
     bool bInFocus;
 
 };
-
+}
 #endif // RESURECTIONBOX_H

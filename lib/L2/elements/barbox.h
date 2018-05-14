@@ -2,12 +2,12 @@
 #define BARBOX_H
 
 
-#include "box.h"
-#include "xpbar.h"
+#include "elements/box.h"
+#include "elements/xpbar.h"
 #include "keycondition.h"
 
 
-
+namespace L2 {
 class Barbox : public Box
 {
 
@@ -86,5 +86,5 @@ signals:
 
 public slots:
 };
-
+}
 #endif // BARBOX_H

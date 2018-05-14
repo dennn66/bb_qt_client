@@ -1,5 +1,5 @@
 #include "targetbox.h"
-
+using namespace L2;
 TargetBox::TargetBox()
 {
     //LOAD CONFIG BB.ini

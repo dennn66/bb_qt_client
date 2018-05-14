@@ -1,15 +1,15 @@
 #ifndef SKILL_H
 #define SKILL_H
 
-#include "l2graphicsobject.h"
-#include "skillstate.h"
+#include "elements/l2graphicsobject.h"
+#include "elements/skillstate.h"
 
 #define SKILLREUSE 0
 #define SKILLRDY 1
 #define SKILLOTHER 2
 
 #define TOOLSELL 32
-
+namespace L2 {
 class Skill : public L2GraphicObject
 {
 public:
@@ -34,5 +34,5 @@ protected:
     SkillState* reuse;
     SkillState* current;
 };
-
+}
 #endif // SKILL_H

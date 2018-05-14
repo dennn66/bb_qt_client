@@ -1,5 +1,5 @@
 #include "resurectionbox.h"
-
+using namespace L2;
 ResurrectionBox::ResurrectionBox(Box *parent) : Box( parent)
 {
     mousex = 0;

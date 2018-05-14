@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include "keyconditionsset.h"
-#include "box.h"
-#include "skill.h"
+#include "elements/box.h"
+#include "elements/skill.h"
 
 #define TOOLLOFFSET 38
 #define TOOLTOFFSET 9
@@ -13,7 +13,7 @@
 #define TOOLH2GAP 7
 
 
-
+namespace L2 {
 class Skillbar : public Box
 {
 
@@ -40,5 +40,5 @@ private:
     //QImage parceSkillbar(int n, QImage* image);
     Skill skill[KEYNUM];
 };
-
+}
 #endif // SKILLBAR_H

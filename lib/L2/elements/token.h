@@ -1,7 +1,7 @@
 #ifndef TOKEN_H
 #define TOKEN_H
 #include <QDebug>
-#include "l2graphicsobject.h"
+#include "elements/l2graphicsobject.h"
 
 
 #define TOKEN_1 0
@@ -14,7 +14,7 @@
 #define HEART_COLOR qRgb(220, 70, 18)
 #define MOON_COLOR qRgb(28, 133, 222)
 #define CROSS_COLOR qRgb(60, 21, 62)
-
+namespace L2 {
 class Token : public L2GraphicObject
 {
 public:
@@ -84,5 +84,5 @@ protected:
     int nToken;
     QColor token_color; //token
 };
-
+}
 #endif // TOKEN_H

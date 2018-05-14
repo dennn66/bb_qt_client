@@ -1,5 +1,5 @@
 #include "partybox.h"
-
+using namespace L2;
 Partybox::Partybox( Barbox *parent) : Barbox( parent)
 {
     memberhp.load("patterns\\mobhp.bmp");

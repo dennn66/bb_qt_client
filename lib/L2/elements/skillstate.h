@@ -9,7 +9,7 @@
 #define TIME_LASTEND    3
 #define TIME_LASTRDY    4
 #define TIME_NUM        5
-
+namespace L2 {
 class SkillState
 {
 public:
@@ -23,5 +23,5 @@ protected:
     QDateTime time[TIME_NUM];
 
 };
-
+}
 #endif // SKILLSTATE_H

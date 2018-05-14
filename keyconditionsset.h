@@ -4,7 +4,7 @@
 #include <QString>
 #include <QTextStream>
 #include <QSettings>
-#include "xpbar.h"
+#include "elements/xpbar.h"
 #include "keycondition.h"
 
 #define KEYNUM 48

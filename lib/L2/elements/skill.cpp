@@ -1,5 +1,5 @@
 #include "skill.h"
-
+using namespace L2;
 Skill::Skill(L2GraphicObject *parent) : L2GraphicObject(parent)
 {
     skillrdy = false;

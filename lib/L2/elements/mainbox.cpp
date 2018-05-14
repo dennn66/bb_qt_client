@@ -1,5 +1,5 @@
 #include "mainbox.h"
-
+using namespace L2;
 Mainbox::Mainbox( Barbox *parent) : Barbox( parent)
 {
     appendbar(idCP,CP_COLOR, BK_CP_COLOR);

@@ -1,5 +1,5 @@
 #include "mobbox.h"
-
+using namespace L2;
 Mobbox::Mobbox( Barbox *parent) : Barbox( parent)
 {
     mobhp.load("patterns\\mobhp.bmp");

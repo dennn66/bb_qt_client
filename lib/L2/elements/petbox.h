@@ -1,7 +1,7 @@
 #ifndef PETBOX_H
 #define PETBOX_H
-#include "barbox.h"
-
+#include "elements/barbox.h"
+namespace L2 {
 class Petbox : public Barbox
 {
 public:
@@ -61,5 +61,5 @@ protected:
     QImage mobhp;
 
 };
-
+}
 #endif // PETBOX_H

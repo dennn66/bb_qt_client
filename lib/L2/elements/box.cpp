@@ -1,5 +1,5 @@
 #include "box.h"
-
+using namespace L2;
 Box::Box(L2GraphicObject *parent) : L2GraphicObject(parent)
 {
     //left = NULL;

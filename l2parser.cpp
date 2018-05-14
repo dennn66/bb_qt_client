@@ -25,13 +25,7 @@ void L2parser::process()
         if(isValidL2W()) {
             try {
                 getCurrentL2W()->check();
-
-                QRect l2rect = getCurrentL2W()->getL2WRect();
-
-                QImage* clicker_bk = new QImage(QSize(l2rect.width(),l2rect.height()), QImage::Format_ARGB32);
-                if(!clicker_bk->isNull()){
-                    getCurrentL2W()->getStatusBk(clicker_bk, bDongleIsWorking);
-                }
+                QImage* clicker_bk = getCurrentL2W()->getStatusBk(bDongleIsWorking);
                 for(int i = 0; i < KEYNUM; i++){  //48 keys
                     if(getCurrentL2W()->is_dongle_skill_state_changed(i) ) emit set_dongle_skill_state(i, getCurrentL2W()->get_dongle_skill_state(i));
                 }

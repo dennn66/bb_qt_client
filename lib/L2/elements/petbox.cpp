@@ -1,6 +1,6 @@
 #include "petbox.h"
 
-
+using namespace L2;
 Petbox::Petbox( Barbox *parent) : Barbox( parent)
 {
     mobhp.load("patterns\\mobhp.bmp");

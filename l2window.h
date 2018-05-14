@@ -19,18 +19,12 @@
 
 #include "keycondition.h"
 #include "keyconditionsset.h"
-#include "skillbar.h"
-#include "mainbox.h"
-#include "mobbox.h"
-#include "petbox.h"
-#include "partybox.h"
-#include "resurectionbox.h"
-#include "targetbox.h"
+
 #include "groupmanager.h"
 
+#include "window.h"
+#include "elements/skillbar.h"
 
-#define L2_OFF false
-#define L2_ON true
 
 
 
@@ -40,16 +34,10 @@ class L2Window  : public QObject
 public:
 
     L2Window(HWND winhwnd, QObject *parent = 0);
-    bool init(QImage image);
-    QIcon* getIcon(){return L2icon; }
-    int getTokenState(){return mobbarbox->getTokenState();}
-    QColor* getTokenColor(){return mobbarbox->getTokenColor(); }
-    QString getTitle();
+
+
     QString getNic(){return getCurrentSettings()->nic; }
-    HWND getHWND(){return hwnd; }
     QString project_file_name;
-    QPoint windowtopright;
-    bool isActiveWindow;
 
     void setGroupState(int num, bool state){groupmanager->setGroupState(num, state);}
 
@@ -58,14 +46,10 @@ public:
     int LoadConfig(QString file_name);
     int SaveConfig(QString file_name);
     int AddConfig(QString file_name);
-    int getXP(int bar);
-    int check();
     QString getConditionLabel(int index){return getCurrentSettings()->condition[index]->getKeyString();}
 
     bool getConditionState(int index){return getCurrentSettings()->condition[index]->getState();}
 
-    void resetBars();
-    void resetSkillbar(){skillsread = false;}
     bool isValidIndex(int index){
         if((index == -1)||(cond_set_list.isEmpty())||(index >= cond_set_list.size()))return false;
         return true;
@@ -75,6 +59,9 @@ public:
     KeyConditionsSet* getCurrentSettings();
     bool isSkillConditionRdy(int num);
     bool isSkillRdy(int num);
+    int check();
+    QImage* getStatusBk(bool donglestate);
+
 
     bool is_dongle_skill_state_changed  (int i){return groupmanager->is_dongle_skill_state_changed(i);    }
     bool get_dongle_skill_state         (int i){return groupmanager->get_dongle_skill_state( i);          }
@@ -84,67 +71,46 @@ public:
     bool is_group_state_changed         (int i){return groupmanager->is_group_state_changed( i);          }
     bool get_group_state                (int i){return groupmanager->get_group_state( i);                 }
 
-    bool is_res_avialable               (     ){return resbox->getOkDetected();                           }
-    bool is_res_in_focus                (     ){return resbox->isOkInFocus();                             }
-    void setMouseCoord(int x, int y)    {resbox->setMouseCoord(x-l2windowrect.x(), y-l2windowrect.y());   }
-    qint8  get_res_DeltaX               (     ){return resbox->getDeltaX();                               }
-    qint8  get_res_DeltaY               (     ){return resbox->getDeltaY();                               }
-
+    void setSkillImg(int n)             {l2w->setSkillImg(n);                                             }
 
     bool getConditionSkill(int index){return getCurrentSettings()->condition[index]->getConditionB(idCheckSkillTimeout);}
 
-    Skillbar* getSkillbar(){return skillbar;}
-    Barbox* getMobbarbox(){return mobbarbox;}
-    Barbox* getMainbarbox(){return mainbarbox;}
-    QImage* setSkillImg(int n){return skillbar->setSkillImg(n, &image);}
+    int getTargetType()                 {return l2w->getTargetType();                                     }
+    QColor* getTokenColor()             {return l2w->getTokenColor();                                     }
+    int getTokenState()                 {return l2w->getTokenState();                                     }
+    QIcon* getIcon()                    {return l2w->getIcon();                                           }
+    L2::Skillbar* getSkillbar()         {return l2w->getSkillbar();                                       }
 
-    bool getPetStatus(){return petbarbox->getLeftStatus();}
-    void getBarStatistic();
-    int getTargetType(){return mobbarbox->getTargetType();}
-    void getStatusBtn(QImage* imgStatus, bool pressed);
-    void getStatusBk(QImage* imgStatus, bool donglestate);
-    QRect getL2WRect(){return l2windowrect;}
-    QRect getSkillRect(int i){return skillbar->getSkillRect(i);}
-    QImage* getImage(){return &image;}
+    QString getTitle()                  {return l2w->getTitle();                                          }
+
+    void resetBars()                    {l2w->resetBars();                                                }
+    void resetSkillbar()                {l2w->resetSkillbar();                                            }
+    HWND getHWND()                      {return l2w->getHWND();                                           }
+    bool isActiveWindow()               {return l2w->isActive();                                          }
+    void getStatusBtn(QImage* imgStatus, bool pressed) {l2w->getStatusBtn(imgStatus, pressed);            }
+    QRect getL2WRect()                  {return l2w->getL2WRect();                                        }
+    QImage* getImage()                  {return l2w->getImage();                                          }
+    int getXP(int bar)                  {return l2w->getXP(bar);                                          }
+    bool is_res_avialable               (     ){return l2w->is_res_avialable();                           }
+    bool is_res_in_focus                (     ){return l2w->is_res_in_focus();                            }
+    void setMouseCoord(int x, int y)    {l2w->setMouseCoord( x,  y);                                      }
+    qint8  get_res_DeltaX               (     ){return l2w->get_res_DeltaX();                             }
+    qint8  get_res_DeltaY               (     ){return l2w->get_res_DeltaY();                             }
+
+
 
     int activeCondSet;
     QVector <KeyConditionsSet*> cond_set_list;
 
-    Skillbar* skillbar;
 private:
 
-    QImage image;
     GroupManager* groupmanager;
+    L2::Window* l2w;
 
 
-    HWND hwnd;
-    bool status;
-    QIcon* L2icon;
-    int image_width;
-    int image_height;
-    QRect l2windowrect;
-    bool skillsread;
-
-    Mainbox* mainbarbox;
-    Mobbox* mobbarbox;
-    Petbox* petbarbox;
-    Partybox* partybox;
-    ResurrectionBox* resbox;
-    TargetBox* targetbox;
-
-    bool bPet;
-    bool bParty;
-    bool bInRange;
-    bool bEnablePet;
-    bool bEnableParty;
-    bool bSearchTarget;
-    bool bShowRange;
 //    bool bEnableTimingDebug;
 
 
-    void capture();
-    bool findCPHPMP(QImage image);
-    QRect getBarRect(int index);
 
 signals:
 
