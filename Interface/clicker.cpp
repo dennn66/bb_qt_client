@@ -102,7 +102,7 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk)
     //qDebug("Clicker::showParserStatus(int updatetime) %d", updatetime);
     static int ellipsed_time=0;
 
-    this->setVisible(this->underMouse() || l2w->isActiveWindow() || (((HWND)(this->winId())) == ::GetForegroundWindow()));
+    this->setVisible(this->underMouse() || l2w->getL2W()->isActive() || (((HWND)(this->winId())) == ::GetForegroundWindow()));
 
     if(!isVisible()) return;
 
@@ -111,11 +111,11 @@ void Clicker::showParserStatus(int updatetime, L2Window* l2w, QImage clicker_bk)
 
     QImage* findbar_btn = new QImage(QSize(51,23), QImage::Format_ARGB32);
     *findbar_btn = *green_frame;
-    l2w->getStatusBtn(findbar_btn, bFindBarsIsPressed);
+    l2w->getL2W()->getStatusBtn(findbar_btn, bFindBarsIsPressed);
     if(!findbar_btn->isNull()) ui->lbStatus->setPixmap(QPixmap::fromImage(*findbar_btn));
     delete findbar_btn;
 
-    QRect l2rect = l2w->getL2WRect();
+    QRect l2rect = l2w->getL2W()->getL2WRect();
     this->resize(l2rect.width(),l2rect.height());
     this->move(l2rect.x(),l2rect.y());
     ui->lbBackground->resize(l2rect.width(),l2rect.height());

@@ -5,17 +5,16 @@ L2Window::L2Window(HWND winhwnd, QObject *parent) : QObject(parent)
 {
 
     //LOAD CONFIG BB.ini
-    QSettings sett("bb.ini", QSettings::IniFormat);
+    //QSettings sett("bb.ini", QSettings::IniFormat);
 
     l2w = new L2::Window(  winhwnd, parent);
-
     groupmanager = new GroupManager;
+    condmgr = new ConditionMgr;
 
-
-    KeyConditionsSet* conditionSet = new KeyConditionsSet();
-    cond_set_list.append(conditionSet);
-    project_file_name = "default.bbproj";
-    activeCondSet = 0;
+    //KeyConditionsSet* conditionSet = new KeyConditionsSet();
+    //cond_set_list.append(conditionSet);
+    //project_file_name = "default.bbproj";
+    //activeCondSet = 0;
 
 }
 
@@ -27,10 +26,10 @@ bool L2Window::isSkillRdy(int num){
 }
 
 bool L2Window::isSkillConditionRdy(int num){
-    KeyCondition* cond = this->getCurrentSettings()->condition[num];
+    KeyCondition* cond = this->getCondMgr()->getCurrentSettings()->condition[num];
     if(!cond->getState()) return false;
 
-    if(getConditionSkill(num)){
+    if(getCondMgr()->getConditionSkill(num)){
         if(!l2w->skillbar->isSkillReady(num)){
             return false;
         } else {
@@ -38,13 +37,13 @@ bool L2Window::isSkillConditionRdy(int num){
         }
     }
 
-    if(!cond->checkTargetCondition(this->getTargetType())){return false;}// Target Condition
-    if(!cond->checkTokenCondition(this->getTokenState())){return false;}// Star Condition
+    if(!cond->checkTargetCondition(this->getL2W()->getTargetType())){return false;}// Target Condition
+    if(!cond->checkTokenCondition(this->getL2W()->getTokenState())){return false;}// Star Condition
 
     for(int barnum = idCP; barnum <= idVP; barnum++){
         if(!cond->checkBarCondition(barnum, l2w->getXP(barnum) )) return false;
     }
-    if(getTargetType() == TARGETMOB){
+    if(getL2W()->getTargetType() == TARGETMOB){
         if(!cond->checkBarCondition(idMobHP, l2w->getXP(idMobHP))) return false;
     }
     if(l2w->bEnablePet){
@@ -62,7 +61,7 @@ bool L2Window::isSkillConditionRdy(int num){
         if(!members_cond) return false ;
     }
     if(cond->getConditionB(idCheckPet)) if (cond->getConditionB(idPetState) != l2w->bPet) return false;
-    if(l2w->bSearchTarget && cond->getConditionB(idCheckRange)&&(getTargetType() == TARGETMOB || getTargetType() == TARGETCHAR)) if (cond->getConditionB(idInRange) != l2w->bInRange) return false;
+    if(l2w->bSearchTarget && cond->getConditionB(idCheckRange)&&(getL2W()->getTargetType() == TARGETMOB || getL2W()->getTargetType() == TARGETCHAR)) if (cond->getConditionB(idInRange) != l2w->bInRange) return false;
 
     int parentskill = cond->getConditionI(idPauseSkillNum);
     if(parentskill < 0xFF){
@@ -82,7 +81,7 @@ int L2Window::check(){
 
     if(l2w->getSkillbar()->getState()) {
         for(int n=0;n<KEYNUM;n++){
-            if(getConditionSkill(n) && getConditionState(n)){
+            if(getCondMgr()->getConditionSkill(n) && getCondMgr()->getConditionState(n)){
                 l2w->checkSkill(n);
             }
         }
@@ -100,8 +99,7 @@ int L2Window::check(){
 
 
 bool L2Window::activateSettings(int index){
-    if(!isValidIndex(index))return false;
-    activeCondSet = index;
+    condmgr->activateSettings(index);
     for(int key_index = 0; key_index < KEYNUM; key_index++){
         updateRule(key_index);
     }
@@ -111,109 +109,13 @@ bool L2Window::activateSettings(int index){
 bool L2Window::updateRule(int key_index){
     if(key_index >= KEYNUM) return false;
     for(int groupcondnum = 0; groupcondnum < GROUPSNUM; groupcondnum++){
-        groupmanager->setGroupCondition(key_index, groupcondnum,  getCurrentSettings()->condition[key_index]->getGroupState(groupcondnum));
+        groupmanager->setGroupCondition(key_index, groupcondnum,  getCondMgr()->getCurrentSettings()->condition[key_index]->getGroupState(groupcondnum));
     }
 
     return true;
 }
 
 
-KeyConditionsSet* L2Window::getCurrentSettings(){
-    if(!isValidIndex(activeCondSet))return NULL;
-    return cond_set_list[activeCondSet];
-}
-
-int L2Window::LoadProject(QString file_name){
-    //qDebug("L2Window::LoadProject");
-    QSettings sett(file_name, QSettings::IniFormat);
-
-    project_file_name = file_name;
-    //qDebug("Proj File: %s", file_name.toStdString().c_str());
-    int proj_size = sett.value("MAIN/count", 0).toInt();
-    //qDebug("count: %d", proj_size);
-    if(proj_size < 1) return 1;
-
-    QString topic = "SETTINGS";
-
-    for(int i = 0;i < proj_size;i++){
-        QString var;
-        QTextStream varstream(&var);
-        var = topic;
-        varstream  << "/settings_file_name" <<  i+1;
-        //qDebug("Topic: %s", var.toStdString().c_str());
-
-        QString settings_file_name = sett.value(var.toStdString().c_str(), "default.cfg").toString();
-        //qDebug("Settings File: %s", settings_file_name.toStdString().c_str());
-
-        if(i < cond_set_list.size()){
-            activeCondSet = i;
-            LoadConfig(settings_file_name);
-            //qDebug("Load: %d", i);
-
-        } else {
-            AddConfig(settings_file_name);
-            //qDebug("Add: %d", i);
-        }
-        activateSettings(0);
-    }
-    while(proj_size < cond_set_list.size()){
-        KeyConditionsSet* tmp = cond_set_list.last();
-        //qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
-        cond_set_list.removeLast();
-        delete(tmp);
-        //qDebug("Removed node %s", tmp->settings_file_name.toStdString().c_str());
-    }
-    //qDebug("FIN L2Window::LoadProject");
-
-    return 1;
-}
-
-int L2Window::SaveProject(QString file_name){
-
-    //qDebug("L2Window::SaveProject");
-
-    QSettings sett(file_name, QSettings::IniFormat);
-
-    project_file_name = file_name;
-    //qDebug("File: %s", file_name.toStdString().c_str());
-    sett.setValue("MAIN/count", cond_set_list.size());
-
-    QString topic = "SETTINGS";
-
-    for(int i = 0;i < cond_set_list.size();i++){
-        QString var;
-        QTextStream varstream(&var);
-        var = topic;
-        varstream  << "/settings_file_name" <<  i+1;
-        sett.setValue(var.toStdString().c_str(), cond_set_list[i]->settings_file_name);
-    }
-    return 1;
-}
-
-int L2Window::AddConfig(QString file_name){
-    //qDebug("L2Window::LoadConfig");
-    KeyConditionsSet* conditionSet = new KeyConditionsSet();
-    cond_set_list.append(conditionSet);
-    activeCondSet = cond_set_list.size() - 1;
-    getCurrentSettings()->LoadConfig(file_name);
-    activateSettings(activeCondSet);
-    return 1;
-}
-
-int L2Window::LoadConfig(QString file_name){
-    //qDebug("L2Window::LoadConfig");
-    getCurrentSettings()->LoadConfig(file_name);
-    //qDebug("FIN L2Window::LoadConfig");
-
-    return 1;
-}
-
-int L2Window::SaveConfig(QString file_name){
-
-    //qDebug("L2Window::LoadConfig");
-    getCurrentSettings()->SaveConfig(file_name);
-    return 1;
-}
 
 
 
@@ -245,9 +147,9 @@ QImage* L2Window::getStatusBk(bool donglestate){
 
        skillpen.setWidth(2);
        for(int i = 0; i < KEYNUM; i++){  //48 keys
-           if(getConditionState(i)){
-               if(get_visual_skill_group_state(i)){
-                   if(get_visual_skill_state(i)) {
+           if(getCondMgr()->getConditionState(i)){
+               if(getGroupManager()->get_visual_skill_group_state(i)){
+                   if(getGroupManager()->get_visual_skill_state(i)) {
                        skillpen.setColor(QColor("#FF00FF00"));
                    } else {
                        skillpen.setColor(QColor("#FFFFFFFF"));
@@ -268,5 +170,6 @@ QImage* L2Window::getStatusBk(bool donglestate){
    p.end();
    return imgStatus;
 }
+
 
 

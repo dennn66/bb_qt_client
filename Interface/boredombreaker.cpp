@@ -427,7 +427,7 @@ void BoredomBreaker::showParserStatus(int updatetime,  L2Window* l2w, QImage cli
 
     if(l2w == NULL)return;
 
-    switch(l2w->getTargetType()){
+    switch(l2w->getL2W()->getTargetType()){
         case  TARGETMEORPET:
             label = "ME OR PET";
             break;
@@ -447,10 +447,10 @@ void BoredomBreaker::showParserStatus(int updatetime,  L2Window* l2w, QImage cli
 
     ui->lbTargetType->setText(label);
 
-    QColor color = *l2w->getTokenColor();
+    QColor color = *l2w->getL2W()->getTokenColor();
     QPalette sample_palette;
     sample_palette.setColor(QPalette::Window, color.rgb());
-    if(l2w->getTokenState() != TOKEN_NONE) {
+    if(l2w->getL2W()->getTokenState() != TOKEN_NONE) {
         sample_palette.setColor(QPalette::WindowText, Qt::green);
     } else {
         sample_palette.setColor(QPalette::WindowText, color.rgb());
@@ -458,11 +458,11 @@ void BoredomBreaker::showParserStatus(int updatetime,  L2Window* l2w, QImage cli
 
     ui->lbStar->setAutoFillBackground(true);
     ui->lbStar->setPalette(sample_palette);
-    ui->cmbWinList->setItemIcon(ui->cmbWinList->currentIndex(), *l2w->getIcon());
+    ui->cmbWinList->setItemIcon(ui->cmbWinList->currentIndex(), *l2w->getL2W()->getIcon());
 
     for(int i = 0; i < KEYNUM; i ++){
-        if(!l2w->getSkillbar()->getSkillImg(i)->isNull()) listNoUseSkill[i]->setIcon( QPixmap::fromImage(*l2w->getSkillbar()->getSkillImg(i)) );
-        if(l2w->getCurrentSettings()->condition[i]->getState()){
+        if(!l2w->getL2W()->getSkillbar()->getSkillImg(i)->isNull()) listNoUseSkill[i]->setIcon( QPixmap::fromImage(*l2w->getL2W()->getSkillbar()->getSkillImg(i)) );
+        if(l2w->getCondMgr()->getCurrentSettings()->condition[i]->getState()){
             listNoUseSkill[i]->setFlags(  Qt::ItemIsEnabled);
         } else {
             listNoUseSkill[i]->setFlags( Qt::NoItemFlags);

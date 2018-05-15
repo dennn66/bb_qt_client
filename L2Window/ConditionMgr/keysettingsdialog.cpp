@@ -78,7 +78,7 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
 
 
 
-    if(!currentl2w->getSkillbar()->getSkillImg(toolNumber)->isNull())    ui->tool_label->setPixmap(QPixmap::fromImage(*currentl2w->getSkillbar()->getSkillImg(toolNumber)));
+    if(!currentl2w->getL2W()->getSkillbar()->getSkillImg(toolNumber)->isNull())    ui->tool_label->setPixmap(QPixmap::fromImage(*currentl2w->getL2W()->getSkillbar()->getSkillImg(toolNumber)));
 
 
 
@@ -166,7 +166,7 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
         QString label;
         QTextStream label_stream(&label);
         label_stream << i+1;
-        if(!currentl2w->getSkillbar()->getSkillImg(toolNumber)->isNull()) listNoUseSkill[i]->setIcon( QPixmap::fromImage(*currentl2w->getSkillbar()->getSkillImg(i)) );
+        if(!currentl2w->getL2W()->getSkillbar()->getSkillImg(toolNumber)->isNull()) listNoUseSkill[i]->setIcon( QPixmap::fromImage(*currentl2w->getL2W()->getSkillbar()->getSkillImg(i)) );
         if( condition->getConditionI(idPauseSkillNum) == i){
              listNoUseSkill[i]->setFlags(  Qt::ItemIsEnabled);
         }  else {
@@ -276,8 +276,8 @@ void KeySettingsDialog::textIChanged(QString text)
 
 void KeySettingsDialog::pbReloadClicked(){
     //qDebug("void KeySettingsDialog::pbReloadClicked()");
-    currentl2w->setSkillImg(toolNumber);
-    if(!currentl2w->getSkillbar()->getSkillImg(toolNumber)->isNull())    ui->tool_label->setPixmap(QPixmap::fromImage(*currentl2w->getSkillbar()->getSkillImg(toolNumber)));
+    currentl2w->getL2W()->setSkillImg(toolNumber);
+    if(!currentl2w->getL2W()->getSkillbar()->getSkillImg(toolNumber)->isNull())    ui->tool_label->setPixmap(QPixmap::fromImage(*currentl2w->getL2W()->getSkillbar()->getSkillImg(toolNumber)));
 }
 
 void KeySettingsDialog::cbKeyMnemonicActivated(int index)

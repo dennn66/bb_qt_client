@@ -26,7 +26,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
     //qDebug()<< "EventProcessor::showParserStatus timeout:" << dtLastStatusReportTime.secsTo(now);
     if(dtLastStatusReportTime.secsTo(now) > 60){
         //qDebug()<< "Timer over 60s: " << dtLastStatusReportTime.secsTo(now);
-        int cp = l2w->getXP(idCP);
+        int cp = l2w->getL2W()->getXP(idCP);
         if( (cp < 100) && (iLastCP - cp > 10)){
             iLastCP = cp;
             QString m;
@@ -40,7 +40,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
             iLastCP = cp;
         }
 
-        if( (l2w->getXP(idHP) > 0) && (l2w->getXP(idHP) <= 100)){
+        if( (l2w->getL2W()->getXP(idHP) > 0) && (l2w->getL2W()->getXP(idHP) <= 100)){
                 dtNonezeroHPTime  = now;
         } else {
             if(dtNonezeroHPTime.secsTo(now) > 5){
@@ -48,7 +48,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
                 //qDebug()<< "Play HP sound " << bEnableSound;
                 QString m;
                 QTextStream m_str(&m);
-                m_str << now.toString("hh:mm:ss") << " You are dead, CP: " << l2w->getXP(idCP) << "%";
+                m_str << now.toString("hh:mm:ss") << " You are dead, CP: " << l2w->getL2W()->getXP(idCP) << "%";
                 emit sendTextMessage(m);//bot->sendMessage(chatID, m);
                 dtNonezeroHPTime = now.addYears(1);
                 dtLastStatusReportTime = now;
@@ -57,9 +57,9 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
     }
 
     if(bNeedResurrection){
-        if( (l2w->getXP(idHP) > 0) && (l2w->getXP(idHP) <= 100)) bNeedResurrection = false;
+        if( (l2w->getL2W()->getXP(idHP) > 0) && (l2w->getL2W()->getXP(idHP) <= 100)) bNeedResurrection = false;
     }
-    if(l2w->is_res_avialable()){
+    if(l2w->getL2W()->is_res_avialable()){
         //GetCursorPos
         //The GetCursorPos function retrieves the cursor's position, in screen coordinates.
 
@@ -70,7 +70,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
         if(GetCursorPos(&pt))
         {
             //qDebug() << "Mouse Cord: " << pt.x << ", " << pt.y;
-            l2w->setMouseCoord(pt.x,pt.y);
+            l2w->getL2W()->setMouseCoord(pt.x,pt.y);
         } else {
             qWarning() << "Mouse Cord call status: fail";
         }
@@ -79,7 +79,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
         {
             emit set_dongle_mode(true);
             bModeCanged = true;
-            if(l2w->is_res_in_focus() )
+            if(l2w->getL2W()->is_res_in_focus() )
             {
                 emit set_operation_state(false);
                 Sleep(60);
@@ -90,7 +90,7 @@ void EventProcessor::showParserStatus(int updatetime, L2Window* l2w, QImage clic
                 emit set_dongle_mode(false);
 
             } else {
-                emit set_mouse_report(l2w->get_res_DeltaX(), l2w->get_res_DeltaY(), false, false, false);
+                emit set_mouse_report(l2w->getL2W()->get_res_DeltaX(), l2w->getL2W()->get_res_DeltaY(), false, false, false);
             }
         }
 

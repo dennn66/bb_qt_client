@@ -5,6 +5,12 @@
 #include <QTime>
 
 #include "l2window.h"
+
+#include "groupmanager.h"
+#include "conditionmgr.h"
+
+#include "window.h"
+#include "elements/skillbar.h"
 #include "keysettingsdialog.h"
 
 Q_DECLARE_METATYPE(QVector <HWND>)
@@ -30,6 +36,8 @@ private:
     L2Window * getCurrentL2W();
     bool isValidL2W();
     bool bDongleIsWorking;
+
+
 
 public slots:
    void process();

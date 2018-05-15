@@ -84,7 +84,7 @@ void TelegramBot::showParserStatus(int updatetime, L2Window* l2w, QImage clicker
     if(bSendScreenshot)
     {
         bSendScreenshot = false;
-        l2w->getImage()->save("screenshot.bmp");
+        l2w->getL2W()->getImage()->save("screenshot.bmp");
         QFile file("screenshot.bmp");
         if (file.open(QIODevice::ReadOnly))
         {
@@ -97,6 +97,6 @@ void TelegramBot::showParserStatus(int updatetime, L2Window* l2w, QImage clicker
     if(bPopupL2Window)
     {
         bPopupL2Window = false;
-        emit popupL2Window(l2w->getHWND());
+        emit popupL2Window(l2w->getL2W()->getHWND());
     }
 }

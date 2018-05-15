@@ -27,7 +27,7 @@ void L2parser::process()
                 getCurrentL2W()->check();
                 QImage* clicker_bk = getCurrentL2W()->getStatusBk(bDongleIsWorking);
                 for(int i = 0; i < KEYNUM; i++){  //48 keys
-                    if(getCurrentL2W()->is_dongle_skill_state_changed(i) ) emit set_dongle_skill_state(i, getCurrentL2W()->get_dongle_skill_state(i));
+                    if(getCurrentL2W()->getGroupManager()->is_dongle_skill_state_changed(i) ) emit set_dongle_skill_state(i, getCurrentL2W()->getGroupManager()->get_dongle_skill_state(i));
                 }
 
                 emit showParserStatus(updateTime.elapsed(), getCurrentL2W(), *clicker_bk);
@@ -55,15 +55,15 @@ void L2parser::process()
 
  void L2parser::setGroupState(int num,  bool state){
      if(isValidL2W()) {
-         getCurrentL2W()->setGroupState(num, state);
-         if(getCurrentL2W()->is_group_state_changed(num)) emit updateGroupState(num, getCurrentL2W()->get_group_state(num));
+         getCurrentL2W()->getGroupManager()->setGroupState(num, state);
+         if(getCurrentL2W()->getGroupManager()->is_group_state_changed(num)) emit updateGroupState(num, getCurrentL2W()->getGroupManager()->get_group_state(num));
      } else {
          emit updateGroupState(num,  false);
      }
 }
 
 void L2parser::toggleGroupState(int num){
-    if(isValidL2W()) setGroupState(num, !getCurrentL2W()->get_group_state(num));
+    if(isValidL2W()) setGroupState(num, !getCurrentL2W()->getGroupManager()->get_group_state(num));
 }
 
 void L2parser::redraw(){
@@ -81,7 +81,7 @@ void L2parser::emitKeySetup(int key_index){
     //qDebug("void L2parser::emitKeySetup(int key_index = %d)", key_index);
     if(!isValidL2W()) return;
     if(key_index<KEYNUM){
-        KeyCondition * cond = getCurrentL2W()->getCurrentSettings()->condition[key_index];
+        KeyCondition * cond = getCurrentL2W()->getCondMgr()->getCurrentSettings()->condition[key_index];
         emit setup_key(
                          key_index, //key index
                         cond->getState(),
@@ -107,7 +107,7 @@ void L2parser::toggleRuleState(int key_index){
     if(!isValidL2W()) return;
 
     if(key_index < KEYNUM ) {
-        getCurrentL2W()->getCurrentSettings()->condition[key_index]->setState(!getCurrentL2W()->getCurrentSettings()->condition[key_index]->getState());
+        getCurrentL2W()->getCondMgr()->getCurrentSettings()->condition[key_index]->setState(!getCurrentL2W()->getCondMgr()->getCurrentSettings()->condition[key_index]->getState());
         emitKeySetup(key_index);
     }
 
@@ -119,10 +119,10 @@ void L2parser::editRule(int key_index){
 
     if(key_index<KEYNUM){
         KeyCondition cond(".");
-        cond = *(getCurrentL2W()->getCurrentSettings()->condition[key_index]);
+        cond = *(getCurrentL2W()->getCondMgr()->getCurrentSettings()->condition[key_index]);
         KeySettingsDialog dlg(&cond, getCurrentL2W(), key_index);
         if(dlg.exec() == QDialog::Accepted){
-           *(getCurrentL2W()->getCurrentSettings()->condition[key_index]) = cond;
+           *(getCurrentL2W()->getCondMgr()->getCurrentSettings()->condition[key_index]) = cond;
             emitKeySetup(key_index);
         }
     }
@@ -132,14 +132,14 @@ void L2parser::editRule(int key_index){
 void L2parser::changeNic(const QString &text){
     //qDebug()<< "L2parser::changeNic(const QString &text) " << text;
     if(!isValidL2W()) return;
-    getCurrentL2W()->getCurrentSettings()->nic = text;
+    getCurrentL2W()->getCondMgr()->getCurrentSettings()->nic = text;
     doUpdateConditiosList();
 }
 
 void L2parser::resetBars(){
     if(!isValidL2W()) return;
-    getCurrentL2W()->resetBars();
-    getCurrentL2W()->resetSkillbar();
+    getCurrentL2W()->getL2W()->resetBars();
+    getCurrentL2W()->getL2W()->resetSkillbar();
 }
 
 void L2parser::doUpdateConditiosList(){
@@ -147,11 +147,11 @@ void L2parser::doUpdateConditiosList(){
 
     if(!isValidL2W())return;
     QVector <QString> list;
-    for(int i = 0 ; i < getCurrentL2W()->cond_set_list.count(); i++){
+    for(int i = 0 ; i < getCurrentL2W()->getCondMgr()->cond_set_list.count(); i++){
         //qDebug() << " list.append(getCurrentL2W()->cond_set_list[i]->nic) " << getCurrentL2W()->cond_set_list[i]->nic;
-        list.append(getCurrentL2W()->cond_set_list[i]->nic);
+        list.append(getCurrentL2W()->getCondMgr()->cond_set_list[i]->nic);
     }
-    emit updateConditiosList(list, getCurrentL2W()->activeCondSet, getCurrentL2W()->getCurrentSettings()->settings_file_name);
+    emit updateConditiosList(list, getCurrentL2W()->getCondMgr()->activeCondSet, getCurrentL2W()->getCondMgr()->getCurrentSettings()->settings_file_name);
 
 }
 
@@ -161,9 +161,9 @@ void L2parser::doUpdateL2WindowsList(){
     QVector <QString> list;
 
     for(int i = 0 ; i < l2list.count(); i++){
-        list.append(l2list[i]->getTitle());
+        list.append(l2list[i]->getL2W()->getTitle());
     }
-    emit updateL2WindowsList(list, currentl2i, getCurrentL2W()->project_file_name);
+    emit updateL2WindowsList(list, currentl2i, getCurrentL2W()->getCondMgr()->project_file_name);
     doUpdateConditiosList();
 
 }
@@ -180,7 +180,7 @@ void L2parser::setActiveL2Index(int l2_index){
 void L2parser::setActiveCondIndex(int index){
     qDebug("void L2parser::setActiveL2Index(int index = %d)", index);
     if(!isValidL2W())return;
-    if(!getCurrentL2W()->isValidIndex(index)) return;
+    if(!getCurrentL2W()->getCondMgr()->isValidIndex(index)) return;
     qDebug("getCurrentL2W()->activateSettings(index = %d) ", index);
     getCurrentL2W()->activateSettings(index);
     doUpdateConditiosList();
@@ -200,7 +200,7 @@ void L2parser::loadProject(QString file_name){
     //qDebug("void L2parser::loadProject(QString file_name)");
     if(!isValidL2W())return;
     if(file_name.isEmpty() || file_name.isNull()) return;
-    getCurrentL2W()->LoadProject(file_name);
+    getCurrentL2W()->getCondMgr()->LoadProject(file_name);
     doUpdateL2WindowsList();
     doUpdateConditiosList();
     send_all_keys_to_dongle();
@@ -211,7 +211,7 @@ void L2parser::saveProject(QString file_name){
     if(!isValidL2W())return;
     if(file_name.isEmpty() || file_name.isNull()) return;
     //qDebug("filename: %s", file_name.toStdString().c_str());
-    getCurrentL2W()->SaveProject(file_name);
+    getCurrentL2W()->getCondMgr()->SaveProject(file_name);
 }
 
 
@@ -220,7 +220,7 @@ void L2parser::saveConfig(QString file_name){
     if(!isValidL2W())return;
     if(file_name.isEmpty() || file_name.isNull()) return;
     //qDebug("filename: %s", file_name.toStdString().c_str());
-    getCurrentL2W()->SaveConfig(file_name);
+    getCurrentL2W()->getCondMgr()->SaveConfig(file_name);
     return;
 }
 
@@ -228,7 +228,7 @@ void L2parser::loadConfig(QString file_name){
     //qDebug("void L2parser::loadConfig(QString file_name)");
     if(!isValidL2W())return;
     if(file_name.isEmpty() || file_name.isNull()) return;
-    getCurrentL2W()->LoadConfig(file_name);
+    getCurrentL2W()->getCondMgr()->LoadConfig(file_name);
     doUpdateConditiosList();
     send_all_keys_to_dongle();
 }
@@ -237,7 +237,7 @@ void L2parser::addConfig(QString file_name){
     //qDebug("void L2parser::addConfig(QString file_name)");
     if(!isValidL2W())return;
     if(file_name.isEmpty() || file_name.isNull()) return;
-    getCurrentL2W()->AddConfig(file_name);
+    getCurrentL2W()->getCondMgr()->AddConfig(file_name);
     doUpdateConditiosList();
     send_all_keys_to_dongle();
 }
@@ -261,7 +261,7 @@ void L2parser::resetL2Windows(QVector <HWND> *hwnd_list){
         bool found = false;
         //Try to find existing windows
         for(int l2index = 0; l2index<l2old.size(); l2index++){
-            if(l2old[l2index]->getHWND() == (*hwnd_list)[hwndindex]){
+            if(l2old[l2index]->getL2W()->getHWND() == (*hwnd_list)[hwndindex]){
                 //qDebug("Found hwnd %d", (int)(*hwnd_list)[hwndindex]);
                 l2temp.append(l2old[l2index]);
                 //qDebug("l2temp.append size %d", l2temp.size());
@@ -277,7 +277,7 @@ void L2parser::resetL2Windows(QVector <HWND> *hwnd_list){
             L2Window* l2w = new L2Window((*hwnd_list)[hwndindex]);
             if(l2w != NULL){
                 l2temp.append(l2w);
-                l2w->LoadProject(default_file_name);
+                l2w->getCondMgr()->LoadProject(default_file_name);
                 //qDebug("l2temp.append size %d", l2temp.size());
             } else {
                 qWarning("l2w creation failed");
