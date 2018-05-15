@@ -18,17 +18,10 @@ include($$PWD/lib/QtTelegramBot/QtTelegramBot.pri)
 include($$PWD/BadUSB/BadUSB.pri)
 include($$PWD/L2Window/L2Window.pri)
 include($$PWD/Interface/Interface.pri)
+include($$PWD/EventProcessor/EventProcessor.pri)
 
 SOURCES += main.cpp \
-    eventprocessor.cpp \
 
-HEADERS  += \
-    eventprocessor.h \
-
-#FORMS    += \
-#    keysettingsdialog.ui
-
-LIBS += -lhid
 LIBS += -lsetupapi
 LIBS += -lgdi32
 LIBS += -luser32

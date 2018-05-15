@@ -14,3 +14,5 @@ HEADERS += \
 
 OTHER_FILES += \
     $$PWD/README.md
+
+LIBS += -lhid
