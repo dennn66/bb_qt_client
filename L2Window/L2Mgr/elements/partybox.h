@@ -8,17 +8,30 @@ public:
     Partybox(Barbox *parent = 0);
 
     void initBars(){
-        for(int i = 0; i < barlist.size(); i++ ){
-            initbar(barlist[i]->getbarID(),  i);
+        for(int j = 0; j < 3; j++ ){
+
+            for(int i = 0; i < 6; i++ ){
+                initbar(barlist[j*6+i]->getbarID(),  i, j);
+            }
         }
     }
 
-    int initbar(int id,  int yposition){
+    int initbar(int id,  int ptmember, int mmbrbar){
 //        int index = Barbox::initbar(id, 20, -11, 28, 8, yposition);
-        int index = Barbox::initbar(id, 17, -3, 26, 46, yposition);
+        int index = Barbox::initbar(id, 17, -3, 18+8*mmbrbar, 46, ptmember);
         if(index >= 0){
-            barlist[index]->patternMethod = true;
-            barlist[index]->barpattern = memberhp;
+
+            switch(mmbrbar){
+            case 0:
+                barlist[index]->patternMethod = false;
+                barlist[index]->barpattern = membercp;
+            case 1:
+                barlist[index]->patternMethod = false;
+                barlist[index]->barpattern = memberhp;
+            case 2:
+                barlist[index]->patternMethod = false;
+                barlist[index]->barpattern = membermp;
+            }
 
         }
         return index;
@@ -51,6 +64,8 @@ public:
 protected:
     int members = 0;
     QImage memberhp;
+    QImage membermp;
+    QImage membercp;
 
 };
 }

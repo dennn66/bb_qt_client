@@ -10,7 +10,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += winextras
 
-TARGET = BB_5_12
+TARGET = bbVideoStreamer
 TEMPLATE = app
 
 win32:RC_FILE = bb.rc

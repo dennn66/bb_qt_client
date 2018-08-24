@@ -203,9 +203,13 @@ int XPBar::checkXPPatternPartial(QImage* image, int pos){
             int deviation_g = (img_pix.green() > pattern_pix.green())? img_pix.green() - pattern_pix.green() : pattern_pix.green() - img_pix.green();
             int deviation_b = (img_pix.blue() > pattern_pix.blue())? img_pix.blue() - pattern_pix.blue() : pattern_pix.blue() - img_pix.blue();
             if( (deviation_r <3+j*2) && (deviation_g <3+j*2) && (deviation_b <3+j*2)) valid++;
+
+
             if(valid > 0)  return j;
         }
     }
+
+
     return -1;
 }
 
@@ -216,6 +220,24 @@ int XPBar::checkXPBarPartial(QImage* image, int begin, int end){
     int position = begin;
     int counter = 0;
     int validator = 0;
+/*
+    QString test_file_label = "xBegin";
+    QTextStream test_file_label_stream(&test_file_label);
+    test_file_label_stream << barID << ".csv";
+    QFile* testFile = new QFile(test_file_label);
+    QTextStream* fStream;
+    bool bFile = testFile->open(QFile::WriteOnly| QIODevice::Append);
+    if(bFile){
+        fStream = new QTextStream(testFile);
+        #ifdef Q_WS_WIN
+            fStream->setCodec("Windows-1251");
+        // Под остальными ОС - utf8
+        #else
+            fStream->setCodec("utf-8");
+        #endif
+    }
+
+*/
 
     for(int j=begin;j<end;j++) {
         if(findPixel(image, yXP, j, 1, barcolor, 5)){
@@ -229,10 +251,48 @@ int XPBar::checkXPBarPartial(QImage* image, int begin, int end){
             max = (counter > max)? counter: max;
             position = (counter == max)? j:position;
         }
+        if(j-begin > 10 and validator < 2) break;
+
+        /*
+        if(bFile && fStream && fStream->device()){
+            if(true){  //barID == 21
+                QColor img_pix = image->pixelColor(QPoint(j,yXP));
+                QColor pattern_pix = barcolor;
+                int deviation_r = (img_pix.red() > pattern_pix.red())? img_pix.red() - pattern_pix.red() : pattern_pix.red() - img_pix.red();
+                int deviation_g = (img_pix.green() > pattern_pix.green())? img_pix.green() - pattern_pix.green() : pattern_pix.green() - img_pix.green();
+                int deviation_b = (img_pix.blue() > pattern_pix.blue())? img_pix.blue() - pattern_pix.blue() : pattern_pix.blue() - img_pix.blue();
+
+
+                *fStream << "pos = " << j << ";"<<
+                            "counter = " << counter << ";"<<
+                            "validator = " << validator << ";"<<
+                            "img_pix.red() = " << img_pix.red() << ";"<<
+                            "pattern_pix.red() = " << pattern_pix.red() << ";"<<
+                            "deviation_r = " << deviation_r << ";"<<
+                            "deviation_r_lim = " << 5 << ";"<<
+                            "img_pix.green() = " << img_pix.green() << ";"<<
+                            "pattern_pix.green() = " << pattern_pix.green() << ";"<<
+                            "deviation_g = " << deviation_g << ";"<<
+                            "deviation_g_lim = " << 5 << ";"<<
+                            "img_pix.blue() = " << img_pix.blue() << ";"<<
+                            "pattern_pix.blue() = " << pattern_pix.blue() << ";"<<
+                            "deviation_b = " << deviation_b << ";"<<
+                            "deviation_b_lim = " << 5 << ";"<<
+                            "valid = " << ((deviation_r < 5) && (deviation_g < 5) && (deviation_b < 5)) << ";"<<
+                            "\r\n";
+            }
+        }
+        */
+
     }
     position = (position <begin )? begin:position;
     position = (position >end )? end:position;
 
+/*
+    if(bFile){
+        testFile->close();
+    }
+*/
    return (validator < 2)?XP_ERR:((position- begin)*100)/barsize;
 }
 

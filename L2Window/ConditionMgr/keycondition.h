@@ -13,12 +13,28 @@
 #define idMobMP 5
 #define idPet1HP 6
 #define idPet2HP 7
+
 #define idPartyHP 8
-#define idParty2HP 9
-#define idParty3HP 10
-#define idParty4HP 11
-#define idParty5HP 12
-#define idParty6HP 13
+#define idParty2HP idPartyHP+1
+#define idParty3HP idPartyHP+2
+#define idParty4HP idPartyHP+3
+#define idParty5HP idPartyHP+4
+#define idParty6HP idPartyHP+5
+
+#define idPartyMP idParty6HP+1
+#define idParty2MP idPartyMP+1
+#define idParty3MP idPartyMP+2
+#define idParty4MP idPartyMP+3
+#define idParty5MP idPartyMP+4
+#define idParty6MP idPartyMP+5
+
+#define idPartyCP idParty6MP+1
+#define idParty2CP idPartyCP+1
+#define idParty3CP idPartyCP+2
+#define idParty4CP idPartyCP+3
+#define idParty5CP idPartyCP+4
+#define idParty6CP idPartyCP+5
+
 
 
 //#define idTargetType 6 //Only for message to dongle
@@ -41,22 +57,27 @@
 #define idMinMobMP      idMobMP     //5
 #define idMinPet1HP     idPet1HP    //6
 #define idMinPet2HP     idPet2HP    //7
-#define idMinMemberHP   idPartyHP   //8
+#define idMinMinMemberHP   idMinPet2HP+1   //8
+#define idMinMinMemberMP   idMinMinMemberHP+1   //9
+#define idMinMinMemberCP   idMinMinMemberMP+1   //9
 
-#define CONDIGROUPS     idPartyHP+1 //9
+
+#define CONDIGROUPS     idMinMinMemberCP+1 //10
 
 
-#define idMaxCP         CONDIGROUPS + idCP      //9
-#define idMaxHP         CONDIGROUPS + idHP      //10
-#define idMaxMP         CONDIGROUPS + idMP      //11
-#define idMaxVP         CONDIGROUPS + idVP      //12
-#define idMaxMobHP      CONDIGROUPS + idMobHP   //13
-#define idMaxMobMP      CONDIGROUPS + idMobMP   //14
-#define idMaxPet1HP     CONDIGROUPS + idPet1HP  //15
-#define idMaxPet2HP     CONDIGROUPS + idPet2HP  //16
-#define idMaxMemberHP   CONDIGROUPS + idPartyHP //17
+#define idMaxCP         CONDIGROUPS + idMinCP      //10
+#define idMaxHP         CONDIGROUPS + idMinHP      //11
+#define idMaxMP         CONDIGROUPS + idMinMP      //12
+#define idMaxVP         CONDIGROUPS + idMinVP      //13
+#define idMaxMobHP      CONDIGROUPS + idMinMobHP   //14
+#define idMaxMobMP      CONDIGROUPS + idMinMobMP   //15
+#define idMaxPet1HP     CONDIGROUPS + idMinPet1HP  //16
+#define idMaxPet2HP     CONDIGROUPS + idMinPet2HP  //17
+#define idMaxMinMemberHP   CONDIGROUPS + idMinMinMemberHP //18
+#define idMaxMinMemberMP   CONDIGROUPS + idMinMinMemberMP //18
+#define idMaxMinMemberCP   CONDIGROUPS + idMinMinMemberCP //18
 
-#define idPauseSkillNum idMaxMemberHP+1         //18
+#define idPauseSkillNum idMaxMinMemberCP+1         //18
 
 #define CONDINUM idPauseSkillNum + 1            //19
 

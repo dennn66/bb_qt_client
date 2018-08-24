@@ -400,6 +400,12 @@ QRect Window::getBarRect(int index){
 
     }
 
+    if(bEnablePet)
+    {
+        petbarbox->drawOverlayedStatus(p, skillpen);
+
+    }
+
     static int lastHP = 0;
     lastHP = ((lastHP == 0)&&(getXP(idHP) > 100))? 0: getXP(idHP);
 

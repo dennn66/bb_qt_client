@@ -28,6 +28,9 @@
 #define BK_MobHP_COLOR qRgb(54,30,28) //$MobHP_COLOR = 0x881D18,+
 #define MobMP_COLOR qRgb(5,63,130) //$PET_MP_COLOR = 0x074C9C,+
 #define BK_MobMP_COLOR qRgb(26,41,67) //$PET_MP_COLOR = 0x074C9C,+
+#define PartyCP_COLOR qRgb(130,104,55) //$PET_MP_COLOR = 0x074C9C,+
+#define BK_PartyCP_COLOR qRgb(65,56,40) //$PET_MP_COLOR = 0x074C9C,+
+
 #define VP_COLOR qRgb(65, 90, 24)
 #define BK_VP_COLOR qRgb(32, 37, 25)
 

@@ -4,10 +4,10 @@
 #include <QApplication>
 #include <QTextCodec>
 
-#define APP_NAME "BB"
+#define APP_NAME "bbVideoStreamer"
 #define APP_VERSION "5.0"
-#define ORG_NAME "Evl"
-#define ORG_DOMAIN "none"
+#define ORG_NAME "bb"
+#define ORG_DOMAIN "bb"
 
 
 // Данные для ведения логов

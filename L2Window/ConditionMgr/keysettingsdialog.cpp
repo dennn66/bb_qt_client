@@ -27,8 +27,9 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
     controli[idMinMobMP         ] = ui->leMobMPMin;
     controli[idMinPet1HP        ] = ui->lePet1HPMin;
     controli[idMinPet2HP        ] = ui->lePet2HPMin;
-    controli[idMinMemberHP      ] = ui->leMemberHPMin;
-
+    controli[idMinMinMemberHP   ] = ui->leMemberHPMin;
+    controli[idMinMinMemberMP   ] = ui->leMemberMPMin;
+    controli[idMinMinMemberCP   ] = ui->leMemberCPMin;
 
     controli[idMaxCP            ] = ui->leCPMax;
     controli[idMaxHP            ] = ui->leHPMax;
@@ -38,8 +39,9 @@ KeySettingsDialog::KeySettingsDialog(KeyCondition* con, L2Window* l2w, int tool,
     controli[idMaxMobMP         ] = ui->leMobMPMax;
     controli[idMaxPet1HP        ] = ui->lePet1HPMax;
     controli[idMaxPet2HP        ] = ui->lePet2HPMax;
-    controli[idMaxMemberHP      ] = ui->leMemberHPMax;
-
+    controli[idMaxMinMemberHP   ] = ui->leMemberHPMax;
+    controli[idMaxMinMemberMP   ] = ui->leMemberMPMax;
+    controli[idMaxMinMemberCP   ] = ui->leMemberCPMax;
 
     controlb[idCheckSkillTimeout] = ui->cbCheckSkill;
 

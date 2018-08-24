@@ -51,15 +51,36 @@ bool L2Window::isSkillConditionRdy(int num){
             if(!cond->checkBarCondition(barnum, l2w->getXP(barnum) )) return false;
         }
     }
-    if(l2w->bEnableParty && cond->isBarConditionEnabled(idMinMemberHP)){
+    /*
+    if(l2w->bEnableParty && cond->isBarConditionEnabled(idMinMinMemberHP)){
         bool members_cond = false;
-        members_cond = cond->checkBarCondition(idMinMemberHP, l2w->getXP(idHP), false );
+        members_cond = cond->checkBarCondition(idMinMinMemberHP, l2w->getXP(idHP), false );
         for(int barnum = idPartyHP; barnum < idPartyHP+l2w->partybox->getMembersNum(); barnum++){
-            members_cond = members_cond || cond->checkBarCondition(idMinMemberHP, l2w->getXP(barnum), false  );
+            members_cond = members_cond || cond->checkBarCondition(idMinMinMemberHP, l2w->getXP(barnum), false  );
             if(members_cond) break;
         }
         if(!members_cond) return false ;
     }
+    */
+    if(l2w->bEnableParty){
+        int rulesIDs[] = {idMinMinMemberHP, idMinMinMemberCP, idMinMinMemberMP};
+        int condIDs[] = {idPartyHP, idPartyCP, idPartyMP};
+        int xpIDs[] = {idHP, idCP, idMP};
+        bool members_cond = false;
+
+        for(int i = 0; i<3; i++){
+            if(cond->isBarConditionEnabled(rulesIDs[i])){
+                members_cond = cond->checkBarCondition(rulesIDs[i], l2w->getXP(xpIDs[i]), false );
+                for(int barnum = condIDs[i]; barnum < condIDs[i]+l2w->partybox->getMembersNum(); barnum++){
+                    members_cond = members_cond || cond->checkBarCondition(rulesIDs[i], l2w->getXP(barnum), false  );
+                    if(members_cond) break;
+                }
+                if(!members_cond) return false ;
+            }
+        }
+    }
+
+
     if(cond->getConditionB(idCheckPet)) if (cond->getConditionB(idPetState) != l2w->bPet) return false;
     if(l2w->bSearchTarget && cond->getConditionB(idCheckRange)&&(getL2W()->getTargetType() == TARGETMOB || getL2W()->getTargetType() == TARGETCHAR)) if (cond->getConditionB(idInRange) != l2w->bInRange) return false;
 

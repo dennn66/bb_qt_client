@@ -377,8 +377,10 @@ int Dongle::connect()
     // Open the device using the VID, PID,
     // and optionally the Serial number.
     //handle = hid_open(0x03eb, 0x204d, L"12345");
+    //8355025
     try {
-        handle = hid_open(0x03eb, 0x204d, NULL);
+        handle = hid_open(0x046D, 0xC21F,NULL);
+        //handle = hid_open(0x046D, 0xC534, NULL);
     } catch(...) {
         qWarning("unable to open device exeption\n");
         state = STATE_DISCONNECTED;

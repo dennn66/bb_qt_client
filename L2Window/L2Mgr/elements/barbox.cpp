@@ -21,10 +21,11 @@ void Barbox::drawOverlayedStatus(QPainter* p, QPen* skillpen){
                 int y = xpr.y()+xpr.height()/2;
                 p->drawRect(QRect(x-1,y-3,3,6));
             } else {
-                skillpen->setColor(QColor("#33888888"));
+                skillpen->setColor(QColor("#0500ffff"));
                 p->setPen(*skillpen);
+                p->drawRect(getBoxRectByIndex(mmb));
             }
-            //p->drawRect(getBoxRectByIndex(mmb));
+
         }
     }
 }

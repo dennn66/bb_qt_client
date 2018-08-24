@@ -3,13 +3,35 @@ using namespace L2;
 Partybox::Partybox( Barbox *parent) : Barbox( parent)
 {
     memberhp.load("patterns\\mobhp.bmp");
+    membermp.load("patterns\\mobmp.bmp");
+    membermp.load("patterns\\membercp.bmp");
+
     iErrDelta = 10;
+
+
+    appendbar(idPartyCP, PartyCP_COLOR, BK_PartyCP_COLOR);
+    appendbar(idParty2CP,PartyCP_COLOR, BK_PartyCP_COLOR);
+    appendbar(idParty3CP,PartyCP_COLOR, BK_PartyCP_COLOR);
+    appendbar(idParty4CP,PartyCP_COLOR, BK_PartyCP_COLOR);
+    appendbar(idParty5CP,PartyCP_COLOR, BK_PartyCP_COLOR);
+    appendbar(idParty6CP,PartyCP_COLOR, BK_PartyCP_COLOR);
+
     appendbar(idPartyHP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idParty2HP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idParty3HP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idParty4HP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idParty5HP,MobHP_COLOR, BK_MobHP_COLOR);
     appendbar(idParty6HP,MobHP_COLOR, BK_MobHP_COLOR);
+
+    appendbar(idPartyMP,MobMP_COLOR, BK_MobMP_COLOR);
+    appendbar(idParty2MP,MobMP_COLOR, BK_MobMP_COLOR);
+    appendbar(idParty3MP,MobMP_COLOR, BK_MobMP_COLOR);
+    appendbar(idParty4MP,MobMP_COLOR, BK_MobMP_COLOR);
+    appendbar(idParty5MP,MobMP_COLOR, BK_MobMP_COLOR);
+    appendbar(idParty6MP,MobMP_COLOR, BK_MobMP_COLOR);
+
+
+
     //barlist[0]->bEnableBarSampling = true;
     caption = "Party Box";
 
